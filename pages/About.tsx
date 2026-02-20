@@ -68,7 +68,7 @@ const About: React.FC = () => {
           <div className="flex-1 order-1 lg:order-2">
             <h2 className="text-3xl font-black mb-8 border-l-4 border-primary pl-6">服務初衷</h2>
             <div className="space-y-6 text-lg text-sage-green leading-relaxed">
-              <p>「長照守護者」的起源，來自於創辦人自身照顧年邁雙親的親身經歷。在尋求資源的過程中，我們發現除了醫療技術外，長者更需要的是「被尊重」與「被陪伴」的溫暖。</p>
+              <p>「安一長照」的起源，來自於創辦人自身照顧年邁雙親的親身經歷。在尋求資源的過程中，我們發現除了醫療技術外，長者更需要的是「被尊重」與「被陪伴」的溫暖。</p>
               <div className="p-6 rounded-2xl bg-gradient-to-r from-primary/10 via-white/5 to-transparent border-l-4 border-primary/40 italic text-dark-text font-medium backdrop-blur-sm">
                 「我們堅持把每一位服務的長者，都當作自己的家人來守護。」
               </div>

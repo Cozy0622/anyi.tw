@@ -1,5 +1,5 @@
 {
-  "name": "安一長照官網 - 第一次測試",
+  "name": "安一長照",
   "description": "提供全方位長照服務的入口平台，包含居家照護、日間照顧、喘息服務等，讓家長與長輩都能享有尊嚴的生活。",
   "requestFramePermissions": [
     "geolocation"
