@@ -37,7 +37,7 @@ const Services: React.FC = () => {
           {SERVICES.map((service) => (
             <div key={service.id} className="flex flex-col bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-md rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all border border-white/50">
               <div className="w-full aspect-[16/9] overflow-hidden">
-                <img src={service.image} alt={service.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                <img src={service.image} alt={service.title} loading="lazy" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
               </div>
               <div className="p-8 flex flex-col flex-1">
                 <h3 className="text-2xl font-bold mb-3">{service.title}</h3>

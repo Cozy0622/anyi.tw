@@ -92,7 +92,7 @@ const Home: React.FC = () => {
             {SERVICES.slice(0, 3).map((svc) => (
               <div key={svc.id} className="group overflow-hidden rounded-2xl bg-gradient-to-br from-white/90 to-white/50 border border-white shadow-md hover:shadow-2xl transition-all flex flex-col backdrop-blur-sm">
                 <div className="aspect-video overflow-hidden">
-                  <img src={svc.image} alt={svc.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <img src={svc.image} alt={svc.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                 </div>
                 <div className="p-8 flex-1 flex flex-col">
                   <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">{svc.title}</h3>
