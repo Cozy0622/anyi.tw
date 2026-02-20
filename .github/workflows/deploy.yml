@@ -21,13 +21,19 @@ jobs:
           node-version: 20
 
       - name: Verify Environment 🔍
+        shell: bash
         run: |
+          echo "Checking Node.js..."
           node -v
+          echo "Checking npm..."
           npm -v
 
       - name: Install and Build 🔧
+        shell: bash
         run: |
+          echo "Installing dependencies..."
           npm ci
+          echo "Building project..."
           npm run build
 
       - name: Deploy 🚀
