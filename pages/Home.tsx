@@ -1,106 +1,255 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { SERVICES } from '../constants';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import * as THREE from 'three';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Home: React.FC = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // 1. WebGL 背景初始化
+    if (!canvasRef.current) return;
+    
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const renderer = new THREE.WebGLRenderer({ 
+      canvas: canvasRef.current, 
+      alpha: true, 
+      antialias: false 
+    });
+    
+    const handleResize = () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        time: { value: 0 },
+        resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+      },
+      vertexShader: `
+        void main() {
+          gl_Position = vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform float time;
+        uniform vec2 resolution;
+
+        void main() {
+          vec2 uv = gl_FragCoord.xy / resolution.xy;
+          float fluid = sin(uv.x * 2.5 + time * 0.1) * cos(uv.y * 1.5 + time * 0.15);
+          fluid += sin(uv.y * 4.0 - time * 0.05) * 0.5;
+          
+          vec3 baseColor = vec3(0.08, 0.09, 0.10);
+          vec3 highlightColor = vec3(0.12, 0.18, 0.16);
+          vec3 finalColor = mix(baseColor, highlightColor, fluid + 0.5);
+          gl_FragColor = vec4(finalColor, 1.0);
+        }
+      `
+    });
+
+    const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+    scene.add(plane);
+
+    let animationFrameId: number;
+    const animate = (time: number) => {
+      material.uniforms.time.value = time * 0.001;
+      renderer.render(scene, camera);
+      animationFrameId = requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+
+    // 2. GSAP 進場動畫
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+      
+      tl.to('.hero-col', {
+        clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+        duration: 2,
+        stagger: 0.15
+      })
+      .to('.hero-title', {
+        y: 0,
+        duration: 1.5
+      }, '-=1.2')
+      .to('.hero-subtitle', {
+        y: 0,
+        duration: 1.2
+      }, '-=1.0')
+      .from('.hero-scroll', {
+        opacity: 0,
+        y: 20,
+        duration: 1
+      }, '-=0.5');
+
+      // 服務列表滾動動畫
+      gsap.utils.toArray('.service-row').forEach((row: any) => {
+        gsap.from(row, {
+          scrollTrigger: {
+            trigger: row,
+            start: 'top 90%',
+            toggleActions: "play none none reverse"
+          },
+          y: 60,
+          opacity: 0,
+          duration: 1,
+          ease: 'power3.out'
+        });
+      });
+    }, heroRef);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameId);
+      ctx.revert();
+      renderer.dispose();
+      material.dispose();
+    };
+  }, []);
+
   return (
-    <div className="flex-1">
+    <div className="flex-1 relative bg-[#0a0a0a]" ref={heroRef}>
+      {/* WebGL Canvas */}
+      <canvas 
+        ref={canvasRef} 
+        className="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none"
+      />
+
+      {/* 垂直參考線 */}
+      <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 flex justify-evenly">
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className="w-[1px] h-full bg-white/[0.03]" />
+        ))}
+      </div>
+
       {/* Hero Section */}
-      <section className="relative w-full overflow-hidden bg-zinc-900">
-        <div className="absolute inset-0">
-          <img 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCh9KsOeGBOIVAbUALc5U7fNWf9wv0WmdI7cCpl2pLnaNbwignhwrdEZg6usWVtSrWVNkQxdc3gXpdTaHs0Aam07R0dl8DKDniKTNe0tlqkf6MyCzEmYWCyd7mkaPn9Eu8-vfOGlaeBOJRX-RXtfXn-ngLMHnzCMshsR2qSvdFDxq9MyKOJktfguqmMpWPKiFHQW76GwbhmuoYDdfA2_x30CEXnUhwEcB91EjQDSVb3ltVDiIQ_HOS7L3xniJgjAUJZIxybNaZzZoLX" 
-            alt="Hero background"
-            className="h-full w-full object-cover opacity-60"
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-primary/10 to-transparent"></div>
+      <section className="relative h-[100svh] w-full flex overflow-hidden group/hero">
+        {/* 切片 1: 建設與無障礙空間 */}
+        <div className="w-1/4 h-full relative hero-col group/col1 transition-all duration-500 hover:grayscale-0 grayscale-[20%]" 
+          style={{ 
+            background: "url('https://images.unsplash.com/photo-1584622781564-1d9876a13300?q=80&w=1200&auto=format&fit=crop') center/cover",
+            clipPath: 'polygon(0 100%, 100% 100%, 100% 100%, 0 100%)'
+          }}>
+          <div className="absolute bottom-10 left-0 w-full text-center opacity-0 group-hover/col1:opacity-100 transition-all duration-500 translate-y-4 group-hover/col1:translate-y-0">
+            <span className="text-[10px] tracking-[0.5em] uppercase font-black text-white bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">01 / Construction</span>
+          </div>
+        </div>
+
+        {/* 切片 2: AI 科技與數位化 */}
+        <div className="w-1/4 h-full relative hero-col group/col2 transition-all duration-500 hover:grayscale-0 grayscale-[20%]" 
+          style={{ 
+            background: "url('https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=1200&auto=format&fit=crop') center/cover",
+            clipPath: 'polygon(0 100%, 100% 100%, 100% 100%, 0 100%)'
+          }}>
+          <div className="absolute bottom-10 left-0 w-full text-center opacity-0 group-hover/col2:opacity-100 transition-all duration-500 translate-y-4 group-hover/col2:translate-y-0">
+            <span className="text-[10px] tracking-[0.5em] uppercase font-black text-white bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">02 / AI Tech</span>
+          </div>
+        </div>
+
+        {/* 切片 3: 設備與耗材供應 */}
+        <div className="w-1/4 h-full relative hero-col group/col3 transition-all duration-500 hover:grayscale-0 grayscale-[20%]" 
+          style={{ 
+            background: "url('https://images.unsplash.com/photo-1530639834082-05bafb81bfad?q=80&w=1200&auto=format&fit=crop') center/cover",
+            clipPath: 'polygon(0 100%, 100% 100%, 100% 100%, 0 100%)'
+          }}>
+          <div className="absolute bottom-10 left-0 w-full text-center opacity-0 group-hover/col3:opacity-100 transition-all duration-500 translate-y-4 group-hover/col3:translate-y-0">
+            <span className="text-[10px] tracking-[0.5em] uppercase font-black text-white bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">03 / Equipment</span>
+          </div>
+        </div>
+
+        {/* 切片 4: 人文關懷與協會 */}
+        <div className="w-1/4 h-full relative hero-col group/col4 transition-all duration-500 hover:grayscale-0 grayscale-[20%]" 
+          style={{ 
+            background: "url('https://images.unsplash.com/photo-1581578731522-540420621305?q=80&w=1200&auto=format&fit=crop') center/cover",
+            clipPath: 'polygon(0 100%, 100% 100%, 100% 100%, 0 100%)'
+          }}>
+          <div className="absolute bottom-10 left-0 w-full text-center opacity-0 group-hover/col4:opacity-100 transition-all duration-500 translate-y-4 group-hover/col4:translate-y-0">
+            <span className="text-[10px] tracking-[0.5em] uppercase font-black text-white bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">04 / Human Care</span>
+          </div>
+        </div>
+
+        {/* Hero 文字疊層 */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/30 flex flex-col justify-center items-center z-10 pointer-events-none text-center px-4">
+          <div className="overflow-hidden">
+            <h1 className="text-6xl md:text-[9.5rem] font-black tracking-tighter uppercase hero-title transform translate-y-full leading-none text-white">
+              Care <span className="text-transparent" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.8)' }}>Redefined</span>
+            </h1>
+          </div>
+          <div className="overflow-hidden mt-6">
+            <p className="text-lg md:text-2xl font-bold tracking-[0.3em] hero-subtitle transform translate-y-full text-emerald-100">
+              全方位智慧長照生態系
+            </p>
+          </div>
         </div>
         
-        <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-10 lg:py-48">
-          <div className="max-w-2xl">
-            <span className="mb-4 inline-block rounded-full bg-primary/20 px-4 py-1 text-sm font-bold text-primary backdrop-blur-md border border-primary/30">
-              溫馨專業的長照服務
-            </span>
-            <h1 className="text-4xl font-black tracking-tight text-white sm:text-6xl mb-6">
-              專業關懷，<br/><span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-white">視如親人</span>
-            </h1>
-            <p className="text-lg leading-relaxed text-gray-200 mb-10 max-w-xl">
-              我們提供充滿溫暖與個人化的長期照護計畫，致力於讓您的摯愛在舒適與尊嚴中安享生活。
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/contact" className="flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-primary-dark px-10 py-4 text-lg font-bold text-white shadow-xl hover:shadow-primary/20 hover:-translate-y-1 transition-all">
-                預約諮詢
-              </Link>
-              <Link to="/services" className="flex items-center justify-center rounded-xl bg-white/10 px-10 py-4 text-lg font-bold text-white backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all">
-                服務項目
-              </Link>
-            </div>
+        {/* 滾動提示 */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 opacity-70 hero-scroll pointer-events-none">
+          <span className="text-xs uppercase tracking-widest font-bold text-white">向下滑動探索</span>
+          <div className="w-[1px] h-12 bg-white/50 overflow-hidden relative">
+            <div className="w-full h-full bg-emerald-400 absolute top-0 left-0 animate-pulse"></div>
           </div>
         </div>
       </section>
 
-      {/* Core Values Section */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent"></div>
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-black text-dark-text mb-4">為什麼選擇我們</h2>
-            <div className="h-1.5 w-20 bg-gradient-to-r from-primary to-primary-dark mx-auto rounded-full"></div>
+      {/* 核心價值 (About) */}
+      <section id="about" className="py-32 px-6 md:px-12 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-xs text-emerald-400 font-bold mb-8 flex items-center gap-4 tracking-widest uppercase">
+            <span className="w-12 h-[1px] bg-emerald-400"></span> 01 / 核心價值
           </div>
-          
+          <h2 className="text-4xl md:text-6xl font-black mb-24 leading-snug text-white">
+            重塑長照標準，<br />
+            融合<span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-cyan-300">科技精準</span>與<span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-orange-300">人文溫感</span>。
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-white/80 to-white/40 border border-white/50 shadow-sm backdrop-blur-md hover:shadow-xl hover:border-primary/20 transition-all">
-              <div className="size-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-6 text-primary">
-                <span className="material-symbols-outlined text-[32px]">verified_user</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3">專業團隊</h3>
-              <p className="text-sage-green leading-relaxed">我們的照護人員均經過認證且經驗豐富，充滿愛心，確保安全與舒適。</p>
+            <div className="bg-white/5 backdrop-blur-xl p-10 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-all">
+              <h3 className="text-2xl font-bold mb-4 text-white">智慧長照大腦</h3>
+              <p className="text-gray-300 text-sm leading-loose">AI智慧輔具、自動化資料存儲與整合分析。結合頂尖軟體開發與專屬網頁設計，打造數位化照護平台。</p>
             </div>
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-white/80 to-white/40 border border-white/50 shadow-sm backdrop-blur-md hover:shadow-xl hover:border-primary/20 transition-all">
-              <div className="size-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-6 text-primary">
-                <span className="material-symbols-outlined text-[32px]">volunteer_activism</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3">客製化照護</h3>
-              <p className="text-sage-green leading-relaxed">專為滿足每位長者獨特需求與偏好而設計的客製化照護計畫。</p>
+            <div className="bg-white/5 backdrop-blur-xl p-10 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-all">
+              <h3 className="text-2xl font-bold mb-4 text-white">無障礙空間美學</h3>
+              <p className="text-gray-300 text-sm leading-loose">專精長照大樓標案建設、養護機構經營與室內設計。施工全透明，專業錄影紀錄。</p>
             </div>
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-white/80 to-white/40 border border-white/50 shadow-sm backdrop-blur-md hover:shadow-xl hover:border-primary/20 transition-all">
-              <div className="size-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-6 text-primary">
-                <span className="material-symbols-outlined text-[32px]">payments</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3">價格透明</h3>
-              <p className="text-sage-green leading-relaxed">清晰、公開的定價，絕無隱藏費用，讓您可以安心規劃與預算。</p>
+            <div className="bg-white/5 backdrop-blur-xl p-10 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-all">
+              <h3 className="text-2xl font-bold mb-4 text-white">全方位服務與社群</h3>
+              <p className="text-gray-300 text-sm leading-loose">醫療器材供應、輔具維修、租賃墊付。串聯「愛無界長照發展協會」，提供豐富長者活動。</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Snapshot */}
-      <section className="py-24 relative">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-            <div className="max-w-2xl">
-              <h2 className="text-3xl font-black text-dark-text mb-4">核心長照服務</h2>
-              <p className="text-sage-green text-lg">全方位的專業照護方案，讓家屬安心，長輩舒心。</p>
-            </div>
-            <Link to="/services" className="text-primary font-bold flex items-center gap-1 hover:translate-x-1 transition-transform">
-              探索所有服務 <span className="material-symbols-outlined">arrow_forward</span>
-            </Link>
+      {/* 服務生態 (Ecosystem) */}
+      <section id="services" className="py-32 relative z-10 bg-[#f4f7f5] text-[#0a0a0a] rounded-t-[3rem] md:rounded-t-[5rem] overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <div className="text-xs text-gray-500 font-bold mb-12 flex items-center gap-4 tracking-widest uppercase">
+            <span className="w-12 h-[1px] bg-gray-500"></span> 02 / 服務生態
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {SERVICES.slice(0, 3).map((svc) => (
-              <div key={svc.id} className="group overflow-hidden rounded-2xl bg-gradient-to-br from-white/90 to-white/50 border border-white shadow-md hover:shadow-2xl transition-all flex flex-col backdrop-blur-sm">
-                <div className="aspect-video overflow-hidden">
-                  <img src={svc.image} alt={svc.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                </div>
-                <div className="p-8 flex-1 flex flex-col">
-                  <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">{svc.title}</h3>
-                  <p className="text-sage-green mb-6 line-clamp-2">{svc.description}</p>
-                  <Link to="/services" className="mt-auto inline-flex items-center font-bold text-primary hover:underline group/link">
-                    了解更多 
-                    <span className="material-symbols-outlined text-sm ml-1 transition-transform group-hover/link:translate-x-1">arrow_forward_ios</span>
-                  </Link>
+          <div className="flex flex-col md:flex-row justify-between items-end mb-24">
+            <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-tight">細緻入微。<br />無所不包。</h2>
+            <p className="text-gray-600 max-w-sm mt-8 md:mt-0 font-medium leading-relaxed">我們建立了一個自給自足且不斷進化的長照生態系。</p>
+          </div>
+          <div className="space-y-0 border-t border-black/10">
+            {[
+              { id: '01', title: '建設與無障礙空間', desc: '長照大樓建設 · 養護經營 · 室內設計', sub: '※ 施工全透明 (專業攝影紀錄)' },
+              { id: '02', title: 'AI 科技與數位化', desc: '智慧輔具 · 資料整合 · 自動化存儲', sub: '※ 專屬軟體開發 · 網頁設計' },
+              { id: '03', title: '設備與耗材供應', desc: '醫材供應 · 團購 · 輔具維修', sub: '※ 租賃墊付 · 營養品定期訂購' },
+              { id: '04', title: '人文關懷與協會', desc: '代辦服務 · 定期課程 · 老人活動', sub: '※ 結合「愛無界長照發展協會」' }
+            ].map((s) => (
+              <div key={s.id} className="service-row border-b border-black/10 py-10 flex flex-col md:flex-row md:items-center justify-between group relative overflow-hidden px-4 hover:bg-black/5 transition-colors">
+                <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-16 relative z-10 w-full">
+                  <span className="text-3xl font-light text-gray-400 group-hover:text-emerald-600 transition-colors">{s.id}</span>
+                  <h3 className="text-3xl md:text-5xl font-bold tracking-tight">{s.title}</h3>
+                  <div className="flex-1 text-gray-700 font-medium md:text-right mt-4 md:mt-0">
+                    {s.desc}<br /><span className="text-emerald-700 text-sm font-bold">{s.sub}</span>
+                  </div>
                 </div>
               </div>
             ))}
@@ -108,20 +257,19 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* CTA Final */}
-      <section className="py-20 relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-white/5 to-primary/10"></div>
-        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-black mb-6">準備好開始了嗎？</h2>
-          <p className="text-lg text-sage-green mb-10">立即聯繫我們預約免費諮詢，讓我們協助您為家人開啟專屬的溫馨照護服務計畫。</p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/contact" className="bg-gradient-to-r from-primary to-primary-dark text-white px-10 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-primary/30 transition-all transform hover:scale-105 active:scale-95">
-              立即聯繫我們
-            </Link>
-            <Link to="/about" className="bg-white/60 backdrop-blur-md text-dark-text px-10 py-4 rounded-xl font-bold text-lg shadow-sm border border-white hover:bg-white/80 transition-all">
-              關於我們的團隊
-            </Link>
-          </div>
+      {/* CTA (Partners) */}
+      <section id="partners" className="py-40 px-6 md:px-12 relative z-10 bg-[#121414] text-center">
+        <div className="max-w-7xl mx-auto flex flex-col items-center">
+          <h2 className="text-5xl md:text-[8rem] font-black mb-16 uppercase leading-none text-white">
+            Start <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-cyan-300">Future Care</span>
+          </h2>
+          <Link to="/contact" className="inline-flex items-center gap-4 bg-white text-black px-12 py-6 rounded-full font-bold text-xl hover:bg-emerald-400 hover:text-white transition-all shadow-[0_0_50px_rgba(52,211,153,0.2)]">
+            啟動未來照護
+          </Link>
+          <footer className="mt-40 text-xs text-gray-600 uppercase tracking-[0.5em] w-full border-t border-white/5 pt-10">
+            &copy; 2026 ANYI CARE. ALL RIGHTS RESERVED.
+          </footer>
         </div>
       </section>
     </div>

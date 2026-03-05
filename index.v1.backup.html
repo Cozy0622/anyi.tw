@@ -141,15 +141,15 @@
   </div>
 
   <!-- 導覽列 -->
-  <nav class="fixed top-0 w-full p-6 md:p-10 flex justify-between items-center z-50">
+  <nav class="fixed top-0 w-full p-6 md:p-10 flex justify-between items-center z-50 mix-blend-difference">
     <div class="flex flex-col">
-      <div class="text-2xl md:text-3xl font-black tracking-[0.2em] uppercase text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">ANYI CARE</div>
-      <div class="text-xs tracking-[0.4em] mt-1 text-emerald-400 font-bold">安一長照</div>
+      <div class="text-2xl font-black tracking-widest uppercase">ANYI CARE</div>
+      <div class="text-xs tracking-[0.3em] mt-1 text-gray-300">安一長照</div>
     </div>
-    <div class="hidden md:flex gap-10 text-sm uppercase font-bold tracking-widest text-white/90">
-      <a href="#about" class="hover-target hover:text-emerald-400 transition-colors">品牌願景</a>
-      <a href="#services" class="hover-target hover:text-emerald-400 transition-colors">服務生態</a>
-      <a href="#partners" class="hover-target hover:text-emerald-400 transition-colors">合作夥伴</a>
+    <div class="hidden md:flex gap-10 text-sm uppercase font-medium tracking-widest">
+      <a href="#about" class="hover-target hover:text-emerald-400 transition-colors">Vision</a>
+      <a href="#services" class="hover-target hover:text-emerald-400 transition-colors">Ecosystem</a>
+      <a href="#partners" class="hover-target hover:text-emerald-400 transition-colors">Partners</a>
     </div>
     <button class="hover-target w-12 h-12 flex flex-col justify-center items-center gap-2 md:hidden">
       <span class="w-8 h-[2px] bg-white"></span>
@@ -158,51 +158,35 @@
   </nav>
 
   <!-- 英雄區塊 (Hero Section) : 4-column clip -->
-  <section class="relative h-[100svh] w-full flex overflow-hidden group/hero">
-    <!-- 切片 1: 建設與無障礙空間 -->
-    <div class="w-1/4 h-full relative clip-col hero-col group/col1" style="background: url('https://images.unsplash.com/photo-1584622781564-1d9876a13300?q=80&w=1200&auto=format&fit=crop') center/cover;">
-      <div class="absolute bottom-10 left-0 w-full text-center opacity-0 group-hover/col1:opacity-100 transition-all duration-500 translate-y-4 group-hover/col1:translate-y-0">
-        <span class="text-[10px] tracking-[0.5em] uppercase font-black text-white bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">01 / Construction</span>
-      </div>
-    </div>
-    <!-- 切片 2: AI 科技與數位化 -->
-    <div class="w-1/4 h-full relative clip-col hero-col group/col2" style="background: url('https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=1200&auto=format&fit=crop') center/cover;">
-      <div class="absolute bottom-10 left-0 w-full text-center opacity-0 group-hover/col2:opacity-100 transition-all duration-500 translate-y-4 group-hover/col2:translate-y-0">
-        <span class="text-[10px] tracking-[0.5em] uppercase font-black text-white bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">02 / AI Tech</span>
-      </div>
-    </div>
-    <!-- 切片 3: 設備與耗材供應 -->
-    <div class="w-1/4 h-full relative clip-col hero-col group/col3" style="background: url('https://images.unsplash.com/photo-1530639834082-05bafb81bfad?q=80&w=1200&auto=format&fit=crop') center/cover;">
-      <div class="absolute bottom-10 left-0 w-full text-center opacity-0 group-hover/col3:opacity-100 transition-all duration-500 translate-y-4 group-hover/col3:translate-y-0">
-        <span class="text-[10px] tracking-[0.5em] uppercase font-black text-white bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">03 / Equipment</span>
-      </div>
-    </div>
-    <!-- 切片 4: 人文關懷與協會 -->
-    <div class="w-1/4 h-full relative clip-col hero-col group/col4" style="background: url('https://images.unsplash.com/photo-1581578731522-540420621305?q=80&w=1200&auto=format&fit=crop') center/cover;">
-      <div class="absolute bottom-10 left-0 w-full text-center opacity-0 group-hover/col4:opacity-100 transition-all duration-500 translate-y-4 group-hover/col4:translate-y-0">
-        <span class="text-[10px] tracking-[0.5em] uppercase font-black text-white bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">04 / Human Care</span>
-      </div>
-    </div>
+  <section class="relative h-[100svh] w-full flex overflow-hidden">
+    <!-- 切片 1: 醫療與科技 -->
+    <div class="w-1/4 h-full relative clip-col hero-col" style="background: url('https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?q=80&w=1200&auto=format&fit=crop') center/cover;"></div>
+    <!-- 切片 2: 長照建築/無障礙 -->
+    <div class="w-1/4 h-full relative clip-col hero-col" style="background: url('https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop') center/cover;"></div>
+    <!-- 切片 3: 智慧輔具/資料 -->
+    <div class="w-1/4 h-full relative clip-col hero-col" style="background: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop') center/cover;"></div>
+    <!-- 切片 4: 溫馨照護/長者 -->
+    <div class="w-1/4 h-full relative clip-col hero-col" style="background: url('https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=1200&auto=format&fit=crop') center/cover;"></div>
 
     <!-- Hero 文字疊層 -->
-    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/30 flex flex-col justify-center items-center z-10 pointer-events-none text-center px-4">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/40 flex flex-col justify-center items-center z-10 pointer-events-none text-center px-4">
       <div class="overflow-hidden">
-        <h1 class="text-6xl md:text-[9.5rem] font-black tracking-tighter uppercase hero-title transform translate-y-full leading-none text-white">
+        <h1 class="text-6xl md:text-[9rem] font-black tracking-tighter uppercase hero-title transform translate-y-full leading-none">
           Care <span class="text-outline">Redefined</span>
         </h1>
       </div>
       <div class="overflow-hidden mt-6">
-        <p class="text-lg md:text-2xl font-bold tracking-[0.3em] hero-subtitle transform translate-y-full text-emerald-100">
+        <p class="text-lg md:text-2xl font-light tracking-[0.2em] hero-subtitle transform translate-y-full text-gray-200">
           全方位智慧長照生態系
         </p>
       </div>
     </div>
     
     <!-- 滾動提示 -->
-    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 opacity-70 hero-scroll pointer-events-none">
-      <span class="text-xs uppercase tracking-widest font-bold">向下滑動探索</span>
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 opacity-50 hero-scroll pointer-events-none">
+      <span class="text-xs uppercase tracking-widest">Scroll to Explore</span>
       <div class="w-[1px] h-12 bg-white/50 overflow-hidden relative">
-        <div class="w-full h-full bg-emerald-400 absolute top-0 left-0 animate-[scrollLine_2s_ease-in-out_infinite]"></div>
+        <div class="w-full h-full bg-white absolute top-0 left-0 animate-[scrollLine_2s_ease-in-out_infinite]"></div>
       </div>
     </div>
   </section>
@@ -210,45 +194,45 @@
   <!-- 核心價值主張 (About/Vision) -->
   <section id="about" class="py-32 px-6 md:px-12 relative z-10">
     <div class="max-w-7xl mx-auto">
-      <div class="text-xs text-emerald-400 font-bold mb-8 flex items-center gap-4 tracking-widest uppercase">
-        <span class="w-12 h-[1px] bg-emerald-400"></span> 01 / 核心價值
+      <div class="text-xs text-emerald-500 font-bold mb-8 flex items-center gap-4 tracking-widest uppercase">
+        <span class="w-12 h-[1px] bg-emerald-500"></span> 01 / Core Values
       </div>
       
-      <h2 class="text-4xl md:text-6xl font-black mb-24 leading-snug text-white">
+      <h2 class="text-4xl md:text-6xl font-black mb-24 leading-snug">
         重塑長照標準，<br>
-        融合<span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-cyan-300">科技精準</span>與<span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-orange-300">人文溫感</span>。
+        融合<span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">科技精準</span>與<span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-orange-400">人文溫感</span>。
       </h2>
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Value 1 -->
-        <div class="glass p-10 rounded-sys hover-target group transition-all duration-500 hover:bg-white/10">
+        <div class="glass p-10 rounded-sys hover-target group transition-all duration-500 hover:bg-white/5">
           <div class="text-5xl text-emerald-400 mb-8 transform group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-500">
             <iconify-icon icon="solar:cpu-bold-duotone"></iconify-icon>
           </div>
-          <h3 class="text-2xl font-bold mb-4 text-white">智慧長照大腦</h3>
-          <p class="text-gray-300 text-sm leading-loose">
+          <h3 class="text-2xl font-bold mb-4">智慧長照大腦</h3>
+          <p class="text-gray-400 text-sm leading-loose">
             AI智慧輔具、自動化資料存儲與整合分析。結合頂尖軟體開發與專屬網頁設計，打造無縫接軌的數位化照護管理平台。
           </p>
         </div>
         
         <!-- Value 2 -->
-        <div class="glass p-10 rounded-sys hover-target group transition-all duration-500 hover:bg-white/10">
+        <div class="glass p-10 rounded-sys hover-target group transition-all duration-500 hover:bg-white/5">
           <div class="text-5xl text-cyan-400 mb-8 transform group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-500">
             <iconify-icon icon="solar:city-bold-duotone"></iconify-icon>
           </div>
-          <h3 class="text-2xl font-bold mb-4 text-white">無障礙空間美學</h3>
-          <p class="text-gray-300 text-sm leading-loose">
+          <h3 class="text-2xl font-bold mb-4">無障礙空間美學</h3>
+          <p class="text-gray-400 text-sm leading-loose">
             專精長照大樓標案建設、養護機構經營與室內設計。施工過程全透明，搭配專業攝影團隊錄影紀錄，品質看得見。
           </p>
         </div>
 
         <!-- Value 3 -->
-        <div class="glass p-10 rounded-sys hover-target group transition-all duration-500 hover:bg-white/10">
-          <div class="text-5xl text-amber-300 mb-8 transform group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-500">
+        <div class="glass p-10 rounded-sys hover-target group transition-all duration-500 hover:bg-white/5">
+          <div class="text-5xl text-amber-400 mb-8 transform group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-500">
             <iconify-icon icon="solar:heart-pulse-bold-duotone"></iconify-icon>
           </div>
-          <h3 class="text-2xl font-bold mb-4 text-white">全方位服務與社群</h3>
-          <p class="text-gray-300 text-sm leading-loose">
+          <h3 class="text-2xl font-bold mb-4">全方位服務與社群</h3>
+          <p class="text-gray-400 text-sm leading-loose">
             醫療器材供應/團購、輔具維修、租賃墊付、營養品定期訂購。串聯「愛無界長照發展協會」，提供長照代辦與豐富長者活動。
           </p>
         </div>
@@ -257,17 +241,17 @@
   </section>
 
   <!-- 完整服務生態系 (Ecosystem List) -->
-  <section id="services" class="py-32 relative z-10 bg-[#f4f7f5] text-[#0a0a0a] rounded-t-[3rem] md:rounded-t-[5rem] overflow-hidden">
+  <section id="services" class="py-32 relative z-10 bg-[#eef2f0] text-[#0a0a0a] rounded-t-[3rem] md:rounded-t-[5rem] overflow-hidden">
     <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
       <div class="text-xs text-gray-500 font-bold mb-12 flex items-center gap-4 tracking-widest uppercase">
-        <span class="w-12 h-[1px] bg-gray-500"></span> 02 / 服務生態
+        <span class="w-12 h-[1px] bg-gray-500"></span> 02 / Service Ecosystem
       </div>
       
       <div class="flex flex-col md:flex-row justify-between items-end mb-24">
         <h2 class="text-5xl md:text-7xl font-black tracking-tighter leading-tight">
           細緻入微。<br>無所不包。
         </h2>
-        <p class="text-gray-600 max-w-sm mt-8 md:mt-0 font-medium leading-relaxed">
+        <p class="text-gray-500 max-w-sm mt-8 md:mt-0 font-medium leading-relaxed">
           從硬體建設到軟體整合，從專業器材到日常營養，我們建立了一個自給自足且不斷進化的長照生態系。
         </p>
       </div>
@@ -279,9 +263,9 @@
           <div class="flex flex-col md:flex-row md:items-center gap-6 md:gap-16 relative z-10 w-full">
             <span class="text-3xl font-light text-gray-400 group-hover:text-emerald-600 transition-colors duration-300">01</span>
             <h3 class="text-3xl md:text-5xl font-bold tracking-tight">建設與無障礙空間</h3>
-            <div class="flex-1 text-gray-700 font-medium md:text-right mt-4 md:mt-0">
+            <div class="flex-1 text-gray-600 font-medium md:text-right mt-4 md:mt-0">
               長照大樓標案建設 · 養護機構經營 · 室內設計 · 無障礙施工<br>
-              <span class="text-emerald-700 text-sm font-bold">※ 施工全透明 (專業攝影團隊錄影紀錄)</span>
+              <span class="text-emerald-700 text-sm">※ 施工全透明 (專業攝影團隊錄影紀錄)</span>
             </div>
           </div>
         </div>
@@ -292,9 +276,9 @@
           <div class="flex flex-col md:flex-row md:items-center gap-6 md:gap-16 relative z-10 w-full">
             <span class="text-3xl font-light text-gray-400 group-hover:text-emerald-600 transition-colors duration-300">02</span>
             <h3 class="text-3xl md:text-5xl font-bold tracking-tight">AI 科技與數位化</h3>
-            <div class="flex-1 text-gray-700 font-medium md:text-right mt-4 md:mt-0">
+            <div class="flex-1 text-gray-600 font-medium md:text-right mt-4 md:mt-0">
               AI智慧輔具 · AI智慧資料整合 · 自動化存儲資料<br>
-              <span class="text-emerald-700 text-sm font-bold">※ 專屬軟體開發 · 網頁設計 · 社群媒體經營</span>
+              <span class="text-emerald-700 text-sm">※ 專屬軟體開發 · 網頁設計 · 社群媒體經營</span>
             </div>
           </div>
         </div>
@@ -305,9 +289,9 @@
           <div class="flex flex-col md:flex-row md:items-center gap-6 md:gap-16 relative z-10 w-full">
             <span class="text-3xl font-light text-gray-400 group-hover:text-emerald-600 transition-colors duration-300">03</span>
             <h3 class="text-3xl md:text-5xl font-bold tracking-tight">設備與耗材供應</h3>
-            <div class="flex-1 text-gray-700 font-medium md:text-right mt-4 md:mt-0">
+            <div class="flex-1 text-gray-600 font-medium md:text-right mt-4 md:mt-0">
               醫療器材供應 · 醫療器材團購 · 輔具維修<br>
-              <span class="text-emerald-700 text-sm font-bold">※ 租賃墊付服務 · 營養品販賣 (含定期訂購)</span>
+              <span class="text-emerald-700 text-sm">※ 租賃墊付服務 · 營養品販賣 (含定期訂購)</span>
             </div>
           </div>
         </div>
@@ -318,9 +302,9 @@
           <div class="flex flex-col md:flex-row md:items-center gap-6 md:gap-16 relative z-10 w-full">
             <span class="text-3xl font-light text-gray-400 group-hover:text-emerald-600 transition-colors duration-300">04</span>
             <h3 class="text-3xl md:text-5xl font-bold tracking-tight">人文關懷與協會</h3>
-            <div class="flex-1 text-gray-700 font-medium md:text-right mt-4 md:mt-0">
+            <div class="flex-1 text-gray-600 font-medium md:text-right mt-4 md:mt-0">
               長照服務代辦 · 在地化長照定期課程 · 老人活動策劃<br>
-              <span class="text-emerald-700 text-sm font-bold">※ 結合「愛無界長照發展協會」擴大服務</span>
+              <span class="text-emerald-700 text-sm">※ 結合「愛無界長照發展協會」擴大服務</span>
             </div>
           </div>
         </div>
@@ -329,24 +313,24 @@
   </section>
 
   <!-- CTA & Partners -->
-  <section id="partners" class="py-32 px-6 md:px-12 relative z-10 bg-[#121414]">
+  <section id="partners" class="py-32 px-6 md:px-12 relative z-10 bg-black">
     <div class="max-w-7xl mx-auto text-center flex flex-col items-center">
       
       <!-- Magnetic CTA Button -->
       <div class="mb-16">
-        <h2 class="text-5xl md:text-[7rem] font-black mb-12 uppercase leading-none hover-target text-white">
+        <h2 class="text-5xl md:text-8xl font-black mb-12 uppercase leading-none hover-target">
           Start <br>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-cyan-300">Future Care</span>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Future Care</span>
         </h2>
         <div class="magnetic-wrap" id="magnetic-btn">
-          <a href="#contact" class="hover-target inline-flex items-center gap-4 bg-white text-black px-12 py-6 rounded-[2.5rem] font-bold text-xl hover:bg-emerald-400 hover:text-white transition-colors duration-300 shadow-[0_0_50px_rgba(52,211,153,0.2)]">
+          <a href="#contact" class="hover-target inline-flex items-center gap-4 bg-white text-black px-12 py-6 rounded-[2.5rem] font-bold text-xl hover:bg-emerald-400 hover:text-white transition-colors duration-300 shadow-[0_0_40px_rgba(52,211,153,0.3)]">
             啟動未來照護 <iconify-icon icon="solar:arrow-right-up-linear" class="text-2xl"></iconify-icon>
           </a>
         </div>
       </div>
 
       <!-- Partners (Simple Icons) -->
-      <div class="mt-32 w-full pt-16 border-t border-white/5">
+      <div class="mt-32 w-full pt-16 border-t border-white/10">
         <p class="text-gray-500 mb-10 text-xs tracking-[0.3em] uppercase font-bold">Empowered by Global Tech & Healthcare Standards</p>
         <div class="flex flex-wrap justify-center items-center gap-10 md:gap-20 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
           <!-- 挑選與軟體開發/資料整合/健康相關的品牌 -->
@@ -499,13 +483,13 @@
           void main() {
             vec2 uv = gl_FragCoord.xy / resolution.xy;
             
-            // 緩慢移動的流體波紋 (調慢速度讓視覺更平穩)
-            float fluid = sin(uv.x * 2.5 + time * 0.1) * cos(uv.y * 1.5 + time * 0.15);
-            fluid += sin(uv.y * 4.0 - time * 0.05) * 0.5;
+            // 緩慢移動的流體波紋
+            float fluid = sin(uv.x * 3.0 + time * 0.2) * cos(uv.y * 2.0 + time * 0.3);
+            fluid += sin(uv.y * 5.0 - time * 0.1) * 0.5;
             
-            // 調亮背景色亮度 (進一步提升基礎亮度，使其更有通透感)
-            vec3 baseColor = vec3(0.08, 0.09, 0.10);
-            vec3 highlightColor = vec3(0.12, 0.18, 0.16);
+            // 深色系科技感背景 (黑/極深灰綠)
+            vec3 baseColor = vec3(0.01, 0.01, 0.015);
+            vec3 highlightColor = vec3(0.02, 0.05, 0.04);
             
             vec3 finalColor = mix(baseColor, highlightColor, fluid + 0.5);
             
