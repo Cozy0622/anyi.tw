@@ -21,26 +21,22 @@ const Footer: React.FC = () => {
               <div>
                 <p className="text-emerald-400 mb-8 text-xs tracking-[0.5em] uppercase font-bold">Connect With Us</p>
                 <div className="flex gap-8 items-center">
-                  <a href="#" className="size-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-emerald-500 hover:text-black transition-all group">
+                  <a href="https://www.instagram.com/anyi.care/" target="_blank" rel="noreferrer" className="size-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-emerald-500 hover:text-black transition-all group">
                      <iconify-icon icon="bi:instagram" className="text-3xl group-hover:scale-110 transition-transform"></iconify-icon>
                   </a>
-                  <a href="#" className="size-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-emerald-500 hover:text-black transition-all group">
+                  <a href="https://www.facebook.com/profile.php?id=61583860456881&locale=zh_TW" target="_blank" rel="noreferrer" className="size-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-emerald-500 hover:text-black transition-all group">
                      <iconify-icon icon="bi:facebook" className="text-3xl group-hover:scale-110 transition-transform"></iconify-icon>
                   </a>
-                  <a href="#" className="size-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-emerald-500 hover:text-black transition-all group">
-                     <iconify-icon icon="bi:line" className="text-3xl group-hover:scale-110 transition-transform"></iconify-icon>
+                  <a href="https://lin.ee/NFWA5Tu" target="_blank" rel="noreferrer" className="ml-2">
+                    <img src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png" alt="加入好友" height="36" border="0" />
                   </a>
                 </div>
               </div>
               
               <div className="space-y-6">
                 <div className="group">
-                   <p className="text-[10px] text-gray-500 tracking-[0.4em] uppercase mb-1">Office Location</p>
-                   <p className="text-white text-lg font-bold group-hover:text-emerald-400 transition-colors">台北市大安區仁愛路四段 100 號</p>
-                </div>
-                <div className="group">
                    <p className="text-[10px] text-gray-500 tracking-[0.4em] uppercase mb-1">Customer Service</p>
-                   <p className="text-white text-lg font-bold group-hover:text-emerald-400 transition-colors">service@anyi.care | 0800-000-000</p>
+                   <p className="text-white text-lg font-bold group-hover:text-emerald-400 transition-colors">anoacozy@gmail.com</p>
                 </div>
               </div>
             </div>
