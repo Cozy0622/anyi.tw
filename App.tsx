@@ -24,14 +24,6 @@ const App: React.FC = () => {
           <Route path="/accessibility" element={<Construction />} />
         </Routes>
         <Footer />
-        
-        {/* Floating Call Button for Mobile */}
-        <a 
-          href="tel:0800000000"
-          className="md:hidden fixed bottom-6 right-6 size-16 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center z-50 transform hover:scale-110 active:scale-90 transition-all border-4 border-white"
-        >
-          <span className="material-symbols-outlined text-3xl">call</span>
-        </a>
       </div>
     </Router>
   );
