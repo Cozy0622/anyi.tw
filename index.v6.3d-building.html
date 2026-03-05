@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANYI CARE | 互動式 3D 養護建築美學</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;900&display=swap');
+        body { margin: 0; overflow: hidden; background: #050505; color: white; font-family: 'Noto Sans TC', sans-serif; }
+        canvas { display: block; }
+        .ui-panel {
+            position: absolute; top: 30px; left: 30px;
+            background: rgba(10, 10, 10, 0.7); backdrop-filter: blur(20px);
+            padding: 30px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05);
+            z-index: 100; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            max-width: 320px;
+        }
+        .btn-toggle {
+            background: #ffffff; color: #000;
+            padding: 14px 28px; border-radius: 12px; font-weight: 900; cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); text-transform: uppercase; 
+            letter-spacing: 1px; width: 100%; text-align: center;
+        }
+        .btn-toggle:hover { background: #10b981; color: white; transform: translateY(-2px); shadow: 0 10px 20px rgba(16, 185, 129, 0.3); }
+        .legend { position: absolute; bottom: 30px; left: 30px; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 16px; font-size: 13px; border: 1px solid rgba(255,255,255,0.05); }
+        .legend-item { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; opacity: 0.8; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .status-badge { display: inline-block; padding: 4px 12px; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 20px; font-size: 10px; font-weight: 900; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="ui-panel">
+        <span class="status-badge">ARCHITECTURAL PREVIEW v2.0</span>
+        <h1 class="text-2xl font-black mb-2 tracking-tighter">安一長照旗艦園區</h1>
+        <p class="text-gray-400 text-sm mb-8 leading-relaxed">
+            採用「去機構化」設計語彙，將醫療安全機能隱形於居家美學之中。點擊按鈕觀看空間拆解。
+        </p>
+        <div id="toggleBtn" class="btn-toggle">拆解建築結構</div>
+    </div>
+
+    <div class="legend">
+        <h3 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Space Distribution</h3>
+        <div class="legend-item"><div class="dot" style="background: #ef4444;"></div> 專業護理站 (Nursing)</div>
+        <div class="legend-item"><div class="dot" style="background: #22c55e;"></div> 景觀交誼廳 (Social Space)</div>
+        <div class="legend-item"><div class="dot" style="background: #3b82f6;"></div> 尊榮長者寢室 (Residential)</div>
+        <div class="legend-item"><div class="dot" style="background: #eab308;"></div> 多功能復健中心 (Rehab)</div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import gsap from 'https://cdn.skypack.dev/gsap';
+
+        // 1. Scene & Setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050505);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(18, 15, 18);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.maxPolarAngle = Math.PI / 2; // 防止看到地底下
+
+        // 2. Advanced Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        scene.add(ambientLight);
+
+        const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        mainLight.position.set(20, 40, 20);
+        mainLight.castShadow = true;
+        mainLight.shadow.mapSize.width = 2048;
+        mainLight.shadow.mapSize.height = 2048;
+        scene.add(mainLight);
+
+        // Ground with subtle reflection
+        const groundGeo = new THREE.PlaneGeometry(200, 200);
+        const groundMat = new THREE.MeshStandardMaterial({ 
+            color: 0x080808, 
+            roughness: 0.2, 
+            metalness: 0.5 
+        });
+        const ground = new THREE.Mesh(groundGeo, groundMat);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        scene.add(ground);
+
+        // Grid helper for architectural feel
+        const grid = new THREE.GridHelper(100, 50, 0x333333, 0x111111);
+        grid.position.y = 0.01;
+        scene.add(grid);
+
+        // 3. Modular Architectural Components
+        const floorGroups = [];
+        const floorCount = 5;
+        const floorHeight = 4.5;
+        const buildingSize = 10;
+
+        function createWall(w, h, d, color = 0xeeeeee) {
+            const mesh = new THREE.Mesh(
+                new THREE.BoxGeometry(w, h, d),
+                new THREE.MeshStandardMaterial({ color, roughness: 0.8 })
+            );
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
+        }
+
+        function createFurniture(type, color) {
+            const group = new THREE.Group();
+            if (type === 'bed') {
+                // Bed Frame
+                const frame = createWall(2, 0.5, 3, 0x442211);
+                const mattress = createWall(1.8, 0.4, 2.8, 0xffffff);
+                mattress.position.y = 0.4;
+                const pillow = createWall(1.4, 0.2, 0.6, 0xeeeeee);
+                pillow.position.set(0, 0.7, -1);
+                group.add(frame, mattress, pillow);
+            } else if (type === 'desk') {
+                const top = createWall(3, 0.1, 1.2, 0xffffff);
+                const leg1 = createWall(0.1, 1.2, 1.2, 0xcccccc);
+                leg1.position.set(1.4, -0.6, 0);
+                const leg2 = createWall(0.1, 1.2, 1.2, 0xcccccc);
+                leg2.position.set(-1.4, -0.6, 0);
+                group.add(top, leg1, leg2);
+            }
+            return group;
+        }
+
+        for (let i = 0; i < floorCount; i++) {
+            const floorGroup = new THREE.Group();
+            floorGroup.position.y = i * floorHeight;
+
+            // --- A. Floor Slab (The "House" part) ---
+            const slab = createWall(buildingSize, 0.4, buildingSize, 0x222222);
+            slab.position.y = 0;
+            floorGroup.add(slab);
+
+            // --- B. Glass & Frames ---
+            const glassGeo = new THREE.BoxGeometry(buildingSize - 0.2, floorHeight - 0.4, buildingSize - 0.2);
+            const glassMat = new THREE.MeshPhysicalMaterial({
+                color: 0x88ccff,
+                metalness: 0.9,
+                roughness: 0.05,
+                transmission: 0.9,
+                transparent: true,
+                opacity: 0.2,
+                ior: 1.5,
+                thickness: 0.5
+            });
+            const glass = new THREE.Mesh(glassGeo, glassMat);
+            glass.position.y = floorHeight/2;
+            floorGroup.add(glass);
+
+            // Window Frames (Edges)
+            const frameGeo = new THREE.BoxGeometry(buildingSize, floorHeight - 0.4, buildingSize);
+            const wireframe = new THREE.LineSegments(
+                new THREE.EdgesGeometry(frameGeo),
+                new THREE.LineBasicMaterial({ color: 0x444444, linewidth: 2 })
+            );
+            wireframe.position.y = floorHeight/2;
+            floorGroup.add(wireframe);
+
+            // --- C. Interior Partitions & Life ---
+            const coreWall = createWall(2, floorHeight - 0.4, 2, 0x333333); // Elevator Core
+            coreWall.position.y = floorHeight/2;
+            floorGroup.add(coreWall);
+
+            // Add Rooms based on floor
+            const roomColors = [0xef4444, 0x22c55e, 0x3b82f6, 0xeab308, 0x3b82f6];
+            const roomColor = roomColors[i];
+
+            // Representative Furniture
+            if (i === 0) { // Lobby
+                const desk = createFurniture('desk', 0xffffff);
+                desk.position.set(0, 1.2, 3);
+                floorGroup.add(desk);
+            } else { // Resident Floors
+                for(let r=0; r<2; r++) {
+                    const bed = createFurniture('bed', 0xffffff);
+                    bed.position.set(r === 0 ? -3 : 3, 0.5, -2);
+                    bed.rotation.y = r === 0 ? Math.PI/2 : -Math.PI/2;
+                    floorGroup.add(bed);
+                }
+            }
+
+            // Interior Glow
+            const pointLight = new THREE.PointLight(roomColor, 5, 10);
+            pointLight.position.set(0, floorHeight - 1, 0);
+            floorGroup.add(pointLight);
+
+            scene.add(floorGroup);
+            floorGroups.push(floorGroup);
+        }
+
+        // 4. Interactive Explode Animation
+        let isExploded = false;
+        const toggleBtn = document.getElementById('toggleBtn');
+
+        function toggleAnimate() {
+            if (!isExploded) {
+                floorGroups.forEach((group, i) => {
+                    // Vertical Lift
+                    gsap.to(group.position, {
+                        y: i * (floorHeight * 2.5),
+                        duration: 2,
+                        ease: "expo.inOut"
+                    });
+
+                    // Reveal Interior: Shrink Glass
+                    const glass = group.children.find(c => c.material && c.material.type === 'MeshPhysicalMaterial');
+                    if (glass) {
+                        gsap.to(glass.scale, { x: 0.1, z: 0.1, duration: 1.5, ease: "power2.inOut" });
+                        gsap.to(glass.material, { opacity: 0, duration: 1 });
+                    }
+                    
+                    // Move core slightly to side
+                    const core = group.children[3];
+                    gsap.to(core.position, { x: -4, duration: 2, ease: "expo.inOut" });
+                });
+                toggleBtn.innerText = "重組大樓結構 Assemble";
+                toggleBtn.style.background = "#10b981";
+                toggleBtn.style.color = "#fff";
+            } else {
+                floorGroups.forEach((group, i) => {
+                    gsap.to(group.position, {
+                        y: i * floorHeight,
+                        duration: 1.8,
+                        ease: "expo.inOut"
+                    });
+
+                    const glass = group.children.find(c => c.material && c.material.type === 'MeshPhysicalMaterial');
+                    if (glass) {
+                        gsap.to(glass.scale, { x: 1, z: 1, duration: 1.5, ease: "power2.inOut" });
+                        gsap.to(glass.material, { opacity: 0.2, duration: 1 });
+                    }
+
+                    const core = group.children[3];
+                    gsap.to(core.position, { x: 0, duration: 1.8, ease: "expo.inOut" });
+                });
+                toggleBtn.innerText = "拆解建築結構 Explode";
+                toggleBtn.style.background = "#ffffff";
+                toggleBtn.style.color = "#000";
+            }
+            isExploded = !isExploded;
+        }
+
+        toggleBtn.addEventListener('click', toggleAnimate);
+
+        // 5. Render Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>

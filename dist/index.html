@@ -1,68 +1,42 @@
-
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" class="antialiased">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>安一長照</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/buttaiwan/gensen-font@v1.501/dist/GensenRounded/GensenRounded.css">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#59b593",
-                        "primary-dark": "#4a9c7d",
-                        "sage-green": "#679550",
-                        "background-light": "#f6f7f7",
-                        "warm-beige": "#fdfaf1",
-                        "dark-text": "#121b0e"
-                    },
-                    fontFamily: {
-                        sans: ['"GensenRounded"', 'sans-serif'],
-                        display: ['"GensenRounded"', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #59b593;
-            border-radius: 4px;
-        }
-        body {
-            background: radial-gradient(circle at top left, #fdfaf1 0%, #f6f7f7 50%, #e8f3ef 100%);
-            min-height: 100vh;
-            font-family: "GensenRounded", sans-serif;
-        }
-    </style>
-
-<script type="importmap">
-{
-  "imports": {
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-router-dom": "https://esm.sh/react-router-dom@^7.12.0"
-  }
-}
-</script>
-  <script type="module" crossorigin src="/assets/index-DAE1d1zo.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>安一長照 ANYI CARE | 智慧長照整合專家</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Iconify -->
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #030303;
+      color: #fafafa;
+      margin: 0;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar { display: none; }
+    
+    .noise-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.012;
+      background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/index-agqnO7KZ.js"></script>
 </head>
-<body class="text-dark-text antialiased">
-    <div id="root"></div>
+<body>
+  <div class="noise-bg"></div>
+  <div id="root"></div>
 </body>
 </html>

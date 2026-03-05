@@ -6,6 +6,13 @@
 - 2026-03-05: 
   - 首頁精修：強化左上角 ANYI CARE 視覺，右上角選單全繁體中文轉化。
   - 視覺連結：Hero 四切片圖片更新為「強意圖」版本，與服務生態 (01-04) 完美對應。
-  - 效能優化：移除 SVG 噪點濾鏡、加入 WebGL 渲染節流與 GPU 硬體加速，提升捲動流暢度。
-  - 頁尾功能：重構 Social Footer，加入 IG、FB、LINE 品牌圖標與「快速諮詢表單」，並實作完美的左右視覺對稱。
-  - 備份紀錄：建立 index.v4.backup.html 作為目前最完整且功能齊全的設計版本。
+  - 頁尾功能：重構 Social Footer，加入 IG、FB、LINE 品牌圖標與留言表單。
+  - 分頁開發：實作「無障礙空間美學」專頁 (/accessibility)。
+  - 高級動效：開發 BuildingDecomposition (Stacking Cards) 組件，展現建築逐層拆解質感。
+  - 工具整合：已將所有現有 MCP 工具、配置與腳本加入專案資料夾。
+  - 目前狀態：首頁完成，無障礙分頁結構完成，已解決 RF 圖片顯示與滾動手感最終調優。
+  - 備份紀錄：index.v5.backup.html。
+
+- 2026-03-05 (後續):
+  - 修復 `BuildingDecomposition.tsx` 中所有樓層圖片（包含 RF 層）的漸隱載入效果（加入 `opacity-0 transition-opacity duration-1000`）。
+  - 優化滾動手感，將最後一張卡片（RF層）也加入釘選 (pin) 邏輯，確保所有建築切片皆能完美堆疊後再解除釘選。

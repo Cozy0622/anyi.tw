@@ -56,6 +56,12 @@ const Navbar: React.FC = () => {
         </nav>
 
         <div className="flex items-center gap-6">
+          <Link
+            to="/contact"
+            className="hidden sm:flex items-center justify-center rounded-full bg-white text-black px-8 py-2.5 text-xs font-black tracking-widest uppercase hover:bg-emerald-400 hover:text-white transition-all shadow-xl"
+          >
+            Inquiry
+          </Link>
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden text-white hover:text-emerald-400 transition-colors"
@@ -84,6 +90,13 @@ const Navbar: React.FC = () => {
               {link.name}
             </Link>
           ))}
+          <Link
+            to="/contact"
+            onClick={() => setIsOpen(false)}
+            className="mt-8 px-12 py-4 bg-emerald-500 text-black font-black rounded-full text-xl"
+          >
+            立即諮詢
+          </Link>
         </div>
       </div>
     </header>

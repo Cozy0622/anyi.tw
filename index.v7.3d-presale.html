@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANYI CARE | 預售屋級 3D 建築透視</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&display=swap');
+        body { margin: 0; overflow: hidden; background: #111111; color: white; font-family: 'Noto Sans TC', sans-serif; }
+        canvas { display: block; outline: none; }
+        .ui-panel {
+            position: absolute; top: 40px; left: 40px;
+            background: rgba(15, 15, 15, 0.65); backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 32px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+            z-index: 100; box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            max-width: 340px; pointer-events: auto;
+        }
+        .title-gradient {
+            background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .btn-toggle {
+            background: #ffffff; color: #000;
+            padding: 16px 32px; border-radius: 12px; font-weight: 700; cursor: pointer;
+            transition: all 0.3s ease; text-transform: uppercase; 
+            letter-spacing: 2px; width: 100%; text-align: center; font-size: 14px;
+        }
+        .btn-toggle:hover { background: #10b981; color: white; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); transform: translateY(-2px); }
+        .loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #111; z-index: 999; display: flex; justify-content: center; align-items: center;
+            transition: opacity 1s ease; pointer-events: none;
+        }
+        .loader-text { font-size: 24px; font-weight: 300; letter-spacing: 4px; color: #10b981; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="loader" id="loader">
+        <div class="loader-text">RENDERING ARCHITECTURE...</div>
+    </div>
+
+    <div class="ui-panel">
+        <div class="inline-block px-3 py-1 bg-white/10 text-emerald-400 rounded-full text-[10px] font-bold tracking-widest mb-4 border border-emerald-500/30">PRE-SALE QUALITY v3.0</div>
+        <h1 class="text-3xl font-black mb-3 tracking-tight title-gradient">安一旗艦園區</h1>
+        <p class="text-gray-400 text-sm mb-8 leading-relaxed font-light">
+            結合 PBR 物理渲染與全局光照技術，呈現真實的材質反射與陰影。體驗極致流暢的建築拆解與內部空間探索。
+        </p>
+        <div id="toggleBtn" class="btn-toggle">拆解建築視角</div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+        import gsap from 'https://cdn.skypack.dev/gsap';
+
+        // ==========================================
+        // 1. 核心渲染器設定 (預售屋級別畫質優化)
+        // ==========================================
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x161719);
+        scene.fog = new THREE.FogExp2(0x161719, 0.015);
+
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(25, 20, 25);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        // 關鍵：電影級色調映射與高品質陰影
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.VSMShadowMap; // 更柔和的陰影邊緣
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxPolarAngle = Math.PI / 2 - 0.05; // 禁入地底
+        controls.minDistance = 10;
+        controls.maxDistance = 60;
+
+        // ==========================================
+        // 2. 燈光與全局反射環境 (PMREM)
+        // ==========================================
+        // 建立極具真實感的室內反射環境
+        const pmremGenerator = new THREE.PMREMGenerator(renderer);
+        pmremGenerator.compileEquirectangularShader();
+        scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+
+        // 單一平行光模擬陽光 (降低陰影計算負擔)
+        const sunLight = new THREE.DirectionalLight(0xfff5e6, 2.5);
+        sunLight.position.set(15, 30, 10);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        sunLight.shadow.camera.near = 0.5;
+        sunLight.shadow.camera.far = 100;
+        sunLight.shadow.camera.left = -15;
+        sunLight.shadow.camera.right = 15;
+        sunLight.shadow.camera.top = 15;
+        sunLight.shadow.camera.bottom = -15;
+        sunLight.shadow.bias = -0.0005;
+        scene.add(sunLight);
+
+        // 微弱環境光補暗部
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+        scene.add(ambientLight);
+
+        // ==========================================
+        // 3. 共用材質庫 (PBR Materials)
+        // ==========================================
+        const mats = {
+            concrete: new THREE.MeshStandardMaterial({ color: 0xaaaaaa, roughness: 0.8, metalness: 0.1 }),
+            darkConcrete: new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.9, metalness: 0.1 }),
+            woodFloor: new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.4, metalness: 0.05 }), // 溫潤木地板
+            marble: new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.1, metalness: 0.1 }), // 高反射大理石
+            woodFurniture: new THREE.MeshStandardMaterial({ color: 0x654321, roughness: 0.6, metalness: 0.1 }),
+            whiteCabinet: new THREE.MeshStandardMaterial({ color: 0xeeeeee, roughness: 0.3, metalness: 0 }),
+            fabricDark: new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.9 }),
+            fabricLight: new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.9 }),
+            plant: new THREE.MeshStandardMaterial({ color: 0x2e8b57, roughness: 0.7, metalness: 0 }),
+            metalBlack: new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 }),
+            // 高效能物理玻璃 (依賴 envMap 產生真實反射，而非昂貴的 transmission)
+            glass: new THREE.MeshPhysicalMaterial({
+                color: 0xffffff, metalness: 0.9, roughness: 0.05,
+                transparent: true, opacity: 0.25, envMapIntensity: 1.5,
+                side: THREE.DoubleSide
+            })
+        };
+
+        // ==========================================
+        // 4. 模組化建築組件
+        // ==========================================
+        function createMesh(geo, mat, castShadow=true, receiveShadow=true) {
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.castShadow = castShadow;
+            mesh.receiveShadow = receiveShadow;
+            return mesh;
+        }
+
+        // 地基與環境
+        const ground = createMesh(new THREE.PlaneGeometry(200, 200), mats.darkConcrete);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -0.1;
+        scene.add(ground);
+
+        const buildingSizeX = 14;
+        const buildingSizeZ = 10;
+        const floorHeight = 3.8;
+        const floorCount = 5;
+        const floorGroups = [];
+
+        // 建立特定傢俱
+        function buildLobby(group) {
+            // 大理石地板
+            const floor = createMesh(new THREE.BoxGeometry(buildingSizeX, 0.2, buildingSizeZ), mats.marble);
+            floor.position.y = 0.1;
+            group.add(floor);
+
+            // 迎賓大櫃檯 (木質+大理石台面)
+            const counterBase = createMesh(new THREE.BoxGeometry(4, 1.0, 1), mats.woodFurniture);
+            counterBase.position.set(0, 0.6, 2);
+            const counterTop = createMesh(new THREE.BoxGeometry(4.2, 0.1, 1.2), mats.marble);
+            counterTop.position.set(0, 1.15, 2);
+            group.add(counterBase, counterTop);
+
+            // 候客沙發區
+            const sofa = createMesh(new THREE.BoxGeometry(3, 0.5, 1.2), mats.fabricDark);
+            sofa.position.set(-3, 0.35, -2);
+            const sofaBack = createMesh(new THREE.BoxGeometry(3, 0.8, 0.3), mats.fabricDark);
+            sofaBack.position.set(-3, 0.8, -2.45);
+            group.add(sofa, sofaBack);
+        }
+
+        function buildCareRoom(group) {
+            // 木地板
+            const floor = createMesh(new THREE.BoxGeometry(buildingSizeX, 0.2, buildingSizeZ), mats.woodFloor);
+            floor.position.y = 0.1;
+            group.add(floor);
+
+            // 走廊隔牆
+            const wall = createMesh(new THREE.BoxGeometry(buildingSizeX, floorHeight, 0.2), mats.concrete);
+            wall.position.set(0, floorHeight/2, 1);
+            group.add(wall);
+
+            // 房間內的床組 (雙床房)
+            for(let i=0; i<2; i++) {
+                const xPos = i === 0 ? -3 : 3;
+                // 床架
+                const bedFrame = createMesh(new THREE.BoxGeometry(2.2, 0.4, 3.2), mats.woodFurniture);
+                bedFrame.position.set(xPos, 0.3, -2);
+                // 床墊與枕頭
+                const mattress = createMesh(new THREE.BoxGeometry(2, 0.3, 3), mats.fabricLight);
+                mattress.position.set(xPos, 0.65, -2);
+                const pillow = createMesh(new THREE.BoxGeometry(1.4, 0.15, 0.6), mats.fabricLight);
+                pillow.position.set(xPos, 0.85, -3.1);
+                // 床頭櫃
+                const sideTable = createMesh(new THREE.BoxGeometry(0.8, 0.6, 0.6), mats.woodFurniture);
+                sideTable.position.set(xPos + 1.6, 0.4, -3.3);
+                group.add(bedFrame, mattress, pillow, sideTable);
+            }
+
+            // 系統衣櫃
+            const wardrobe = createMesh(new THREE.BoxGeometry(2, floorHeight-0.2, 1), mats.whiteCabinet);
+            wardrobe.position.set(-5.8, floorHeight/2, -1.5);
+            group.add(wardrobe);
+        }
+
+        function buildLounge(group) {
+            const floor = createMesh(new THREE.BoxGeometry(buildingSizeX, 0.2, buildingSizeZ), mats.woodFloor);
+            floor.position.y = 0.1;
+            group.add(floor);
+
+            // 綠植栽 (由幾個圓球組成)
+            const pot = createMesh(new THREE.CylinderGeometry(0.4, 0.3, 0.6), mats.darkConcrete);
+            pot.position.set(5, 0.4, -3);
+            const plant1 = createMesh(new THREE.SphereGeometry(0.8), mats.plant);
+            plant1.position.set(5, 1.2, -3);
+            const plant2 = createMesh(new THREE.SphereGeometry(0.6), mats.plant);
+            plant2.position.set(5.5, 1.0, -2.5);
+            group.add(pot, plant1, plant2);
+
+            // 圓形交誼桌與椅子
+            const table = createMesh(new THREE.CylinderGeometry(1.2, 1.2, 0.1), mats.marble);
+            table.position.set(0, 0.8, -1);
+            const tableLeg = createMesh(new THREE.CylinderGeometry(0.1, 0.1, 0.7), mats.metalBlack);
+            tableLeg.position.set(0, 0.45, -1);
+            group.add(table, tableLeg);
+        }
+
+        // ==========================================
+        // 5. 組裝大樓
+        // ==========================================
+        for (let i = 0; i < floorCount; i++) {
+            const group = new THREE.Group();
+            group.position.y = i * floorHeight;
+
+            // 樓板底座 (天花板)
+            if (i > 0) {
+                const ceiling = createMesh(new THREE.BoxGeometry(buildingSizeX, 0.2, buildingSizeZ), mats.concrete);
+                ceiling.position.y = 0;
+                group.add(ceiling);
+            }
+
+            // 內部裝潢分配
+            if (i === 0) buildLobby(group);
+            else if (i === 4) buildLounge(group);
+            else buildCareRoom(group);
+
+            // --- 外部帷幕系統 (玻璃與金屬框) ---
+            const curtainGroup = new THREE.Group();
+            curtainGroup.name = "curtain";
+
+            // 大面積景觀玻璃
+            const glassGeo = new THREE.BoxGeometry(buildingSizeX, floorHeight, buildingSizeZ);
+            const glass = createMesh(glassGeo, mats.glass, false, false);
+            glass.position.y = floorHeight / 2;
+            curtainGroup.add(glass);
+
+            // 黑色陽台格柵 / 窗框 (使用 Cylinder 效能較好且精緻)
+            const frameThickness = 0.1;
+            // 四個角落柱子
+            const cornerPos = [
+                [buildingSizeX/2, buildingSizeZ/2], [-buildingSizeX/2, buildingSizeZ/2],
+                [buildingSizeX/2, -buildingSizeZ/2], [-buildingSizeX/2, -buildingSizeZ/2]
+            ];
+            cornerPos.forEach(p => {
+                const pillar = createMesh(new THREE.BoxGeometry(frameThickness*2, floorHeight, frameThickness*2), mats.metalBlack);
+                pillar.position.set(p[0], floorHeight/2, p[1]);
+                curtainGroup.add(pillar);
+            });
+            // 橫向分隔框
+            const hFrame = createMesh(new THREE.BoxGeometry(buildingSizeX, frameThickness, buildingSizeZ), mats.metalBlack);
+            hFrame.position.y = floorHeight/2;
+            curtainGroup.add(hFrame);
+
+            group.add(curtainGroup);
+            scene.add(group);
+            floorGroups.push(group);
+        }
+
+        // 隱藏 Loader
+        document.getElementById('loader').style.opacity = '0';
+        setTimeout(() => document.getElementById('loader').remove(), 1000);
+
+        // ==========================================
+        // 6. 互動式空間拆解動畫 (極致平滑)
+        // ==========================================
+        let isExploded = false;
+        const toggleBtn = document.getElementById('toggleBtn');
+
+        function toggleAnimate() {
+            if (!isExploded) {
+                // 拆解：拉開樓層並淡化玻璃帷幕
+                floorGroups.forEach((group, i) => {
+                    // Y軸大間距拉開
+                    gsap.to(group.position, {
+                        y: i * (floorHeight * 2.2),
+                        duration: 1.8,
+                        ease: "power3.inOut"
+                    });
+
+                    // 找出玻璃帷幕並隱藏
+                    const curtain = group.children.find(c => c.name === 'curtain');
+                    if (curtain) {
+                        // 向上浮起並變透明
+                        gsap.to(curtain.position, { y: 2, duration: 1.5, ease: "power2.inOut" });
+                        curtain.children.forEach(mesh => {
+                            if(mesh.material === mats.glass) {
+                                gsap.to(mesh.material, { opacity: 0, duration: 1.2 });
+                            } else {
+                                // 隱藏金屬框
+                                gsap.to(mesh.scale, { x: 0.01, z: 0.01, duration: 1.2 });
+                            }
+                        });
+                    }
+                });
+                toggleBtn.innerText = "組合建築結構";
+                toggleBtn.style.background = "#10b981";
+                toggleBtn.style.color = "#fff";
+                
+                // 鏡頭自動微調至適合觀看內部的角度
+                gsap.to(camera.position, { y: 35, z: 35, duration: 2, ease: "power2.inOut" });
+
+            } else {
+                // 組合：復原座標與玻璃
+                floorGroups.forEach((group, i) => {
+                    gsap.to(group.position, {
+                        y: i * floorHeight,
+                        duration: 1.5,
+                        ease: "power3.inOut"
+                    });
+
+                    const curtain = group.children.find(c => c.name === 'curtain');
+                    if (curtain) {
+                        gsap.to(curtain.position, { y: 0, duration: 1.5, ease: "power2.inOut" });
+                        curtain.children.forEach(mesh => {
+                            if(mesh.material === mats.glass) {
+                                gsap.to(mesh.material, { opacity: 0.25, duration: 1.5 });
+                            } else {
+                                gsap.to(mesh.scale, { x: 1, z: 1, duration: 1.5 });
+                            }
+                        });
+                    }
+                });
+                toggleBtn.innerText = "拆解建築視角";
+                toggleBtn.style.background = "#ffffff";
+                toggleBtn.style.color = "#000";
+            }
+            isExploded = !isExploded;
+        }
+
+        toggleBtn.addEventListener('click', toggleAnimate);
+
+        // ==========================================
+        // 7. 渲染迴圈
+        // ==========================================
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>

@@ -8,12 +8,12 @@ import Services from './pages/Services';
 import About from './pages/About';
 import News from './pages/News';
 import Contact from './pages/Contact';
-import Construction from './pages/Accessibility';
+import Accessibility from './pages/Accessibility';
 
 const App: React.FC = () => {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col font-sans bg-[#222222] selection:bg-emerald-500/40 text-white">
+      <div className="min-h-screen flex flex-col font-sans bg-[#030303] selection:bg-emerald-500/30 text-white">
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -21,7 +21,7 @@ const App: React.FC = () => {
           <Route path="/about" element={<About />} />
           <Route path="/news" element={<News />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/accessibility" element={<Construction />} />
+          <Route path="/accessibility" element={<Accessibility />} />
         </Routes>
         <Footer />
         

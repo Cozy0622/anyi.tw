@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安一長照 ANYI CARE | 建設與無障礙空間整合專家</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;700;900&display=swap');
+        body { 
+            margin: 0; 
+            background-color: #222222; 
+            color: white; 
+            font-family: 'Noto Sans TC', sans-serif; 
+            overflow-x: hidden;
+            font-weight: 300;
+        }
+        canvas { display: block; position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; }
+        .vertical-text { writing-mode: vertical-rl; }
+        .hero-title { line-height: 0.8; }
+        .reveal-text { opacity: 0; transform: translateY(40px); }
+        .grid-line { width: 1px; height: 100%; background: rgba(255,255,255,0.05); position: fixed; top: 0; pointer-events: none; }
+        .placeholder-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
+        ::selection { background: rgba(16, 185, 129, 0.4); }
+    </style>
+</head>
+<body>
+
+    <!-- WebGL Background -->
+    <div id="canvas-container"></div>
+
+    <!-- Background Grid Lines -->
+    <div class="grid-line" style="left: 20%;"></div>
+    <div class="grid-line" style="left: 40%;"></div>
+    <div class="grid-line" style="left: 60%;"></div>
+    <div class="grid-line" style="left: 80%;"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 px-10 py-8 flex justify-between items-center mix-blend-difference">
+        <div class="text-xl font-black tracking-tighter">ANYI CARE</div>
+        <div class="flex gap-10 text-[10px] font-bold tracking-[0.4em] uppercase">
+            <a href="#about" class="hover:text-emerald-400 transition-colors">Vision</a>
+            <a href="#services" class="hover:text-emerald-400 transition-colors">Services</a>
+            <a href="#tender" class="hover:text-emerald-400 transition-colors">Records</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative h-screen w-full flex overflow-hidden bg-[#222222]">
+        <div class="flex w-full h-full">
+            <div class="flex-1 border-r border-white/10 bg-cover bg-center grayscale hover:grayscale-0 transition-all duration-700" style="background-image: url('https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200');"></div>
+            <div class="flex-1 border-r border-white/10 bg-cover bg-center grayscale hover:grayscale-0 transition-all duration-700" style="background-image: url('https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=1200');"></div>
+            <div class="flex-1 border-r border-white/10 bg-cover bg-center grayscale hover:grayscale-0 transition-all duration-700" style="background-image: url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1200');"></div>
+            <div class="flex-1 bg-cover bg-center grayscale hover:grayscale-0 transition-all duration-700" style="background-image: url('https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=1200');"></div>
+        </div>
+        
+        <div class="absolute inset-0 flex flex-col justify-center items-center pointer-events-none text-center px-4 bg-gradient-to-t from-black/40 via-transparent to-black/10">
+            <h1 class="text-7xl md:text-[10rem] font-black tracking-tighter uppercase italic text-white hero-title">
+                Care <span class="text-transparent" style="-webkit-text-stroke: 1px rgba(255,255,255,0.8);">Redefined</span>
+            </h1>
+            <p class="text-xl md:text-2xl font-bold tracking-[0.4em] text-emerald-100 mt-10">全方位智慧長照生態系</p>
+        </div>
+
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
+            <span class="text-[9px] uppercase tracking-widest font-black">Scroll Down</span>
+            <div class="w-[1px] h-12 bg-emerald-500/50"></div>
+        </div>
+    </section>
+
+    <!-- Vision Section -->
+    <section id="about" class="py-40 px-6 md:px-20 relative z-10 max-w-7xl mx-auto">
+        <div class="text-xs text-emerald-400 font-bold mb-12 flex items-center gap-4 tracking-[0.8em] uppercase text-[10px]">
+            <span class="w-12 h-[1px] bg-emerald-400/50"></span> Vision & Identity
+        </div>
+        <h2 class="text-4xl md:text-7xl font-light mb-32 leading-tight text-[#E5E5E5] tracking-tighter uppercase italic">
+            重塑長照標準，<br />融合<span class="text-white/40 font-thin not-italic">科技精準</span>與<span class="text-white/40 font-thin not-italic">人文溫感</span>。
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-20">
+            <div class="service-card flex flex-col items-start text-left">
+                <div class="w-full h-[1px] bg-white/10 mb-12"></div>
+                <h3 class="text-3xl md:text-4xl font-black mb-8 text-white tracking-tighter uppercase italic leading-none">智慧長照大腦</h3>
+                <p class="text-gray-400 text-lg leading-relaxed font-normal">AI智慧輔具、自動化資料存儲與整合分析。打造數位化照護管理平台。</p>
+            </div>
+            <div class="service-card flex flex-col items-start text-left">
+                <div class="w-full h-[1px] bg-white/10 mb-12"></div>
+                <h3 class="text-3xl md:text-4xl font-black mb-8 text-white tracking-tighter uppercase italic leading-none">無障礙美學</h3>
+                <p class="text-gray-400 text-lg leading-relaxed font-normal">專精長照大樓標案建設與室內設計。施工全透明，搭配大鎵營造專業紀錄。</p>
+            </div>
+            <div class="service-card flex flex-col items-start text-left">
+                <div class="w-full h-[1px] bg-white/10 mb-12"></div>
+                <h3 class="text-3xl md:text-4xl font-black mb-8 text-white tracking-tighter uppercase italic leading-none">全方位社群</h3>
+                <p class="text-gray-400 text-lg leading-relaxed font-normal">醫療器材供應、輔具維修。串聯「愛無界長照發展協會」，提供長者活動。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tender Section -->
+    <section id="tender" class="py-40 relative z-10 bg-[#1a1a1a] border-y border-white/5 px-6 md:px-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-24 gap-10">
+                <div>
+                    <span class="text-emerald-400 font-bold tracking-[0.4em] uppercase text-[10px] mb-4 block">Official Records</span>
+                    <h2 class="text-5xl md:text-8xl font-black tracking-tighter italic uppercase">大鎵營造實績</h2>
+                </div>
+                <div class="text-right pb-4">
+                    <p class="text-gray-500 text-xs font-bold tracking-widest">UBN: 83462457</p>
+                    <p class="text-white/20 text-[9px] tracking-[0.5em] uppercase mt-1">Strategic Partner</p>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10" id="tender-list">
+                <!-- Tenders will be injected here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-32 px-10 text-center border-t border-white/5 relative z-10 bg-[#222222]">
+        <h2 class="text-5xl md:text-8xl font-black mb-16 tracking-tighter italic uppercase text-white/10">ANYI CARE</h2>
+        <div class="flex flex-col md:flex-row justify-between items-center gap-10 text-[10px] text-gray-500 tracking-[0.5em] uppercase">
+            <div>&copy; 2026 ANYI CARE. ALL RIGHTS RESERVED.</div>
+            <div class="flex gap-10">
+                <a href="#" class="hover:text-emerald-400 transition-colors">Facebook</a>
+                <a href="#" class="hover:text-emerald-400 transition-colors">Instagram</a>
+                <a href="#" class="hover:text-emerald-400 transition-colors">Line</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        // 1. WebGL Background
+        const scene = new THREE.Scene();
+        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        const resize = () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        };
+        window.addEventListener('resize', resize);
+        resize();
+
+        const material = new THREE.ShaderMaterial({
+            uniforms: {
+                time: { value: 0 },
+                resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+            },
+            vertexShader: `void main() { gl_Position = vec4(position, 1.0); }`,
+            fragmentShader: `
+                uniform float time;
+                uniform vec2 resolution;
+                void main() {
+                    vec2 uv = gl_FragCoord.xy / resolution.xy;
+                    float fluid = sin(uv.x * 2.5 + time * 0.1) * cos(uv.y * 1.5 + time * 0.15);
+                    fluid += sin(uv.y * 4.0 - time * 0.05) * 0.5;
+                    vec3 baseColor = vec3(0.22, 0.24, 0.26);
+                    vec3 highlightColor = vec3(0.32, 0.38, 0.35);
+                    vec3 finalColor = mix(baseColor, highlightColor, fluid + 0.5);
+                    gl_FragColor = vec4(finalColor, 1.0);
+                }
+            `
+        });
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+        scene.add(plane);
+
+        const animate = (time) => {
+            material.uniforms.time.value = time * 0.001;
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+
+        // 2. Data Injection
+        const tenders = [
+            { date: '2024-12-23', title: '臺鐵車站美學提升-日南站修復工程', amount: '43,173,754' },
+            { date: '2024-10-14', title: '新竹縣縣定古蹟-芎林鍾屋夥房修復工程', amount: '37,871,753' },
+            { date: '2023-12-19', title: '白色恐怖景美紀念園區紀念碑整修工程', amount: '26,600,746' },
+            { date: '2025-08-08', title: '嘉義縣歷史建築中央廣播電台修復工程', amount: '7,266,647' },
+            { date: '2025-05-22', title: '桃園市立大園幼兒園環境改善工程', amount: '8,621,662' }
+        ];
+
+        const tenderContainer = document.getElementById('tender-list');
+        tenders.forEach(t => {
+            const row = document.createElement('div');
+            row.className = 'border-b border-white/5 py-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-center group transition-colors px-4 hover:bg-white/[0.02]';
+            row.innerHTML = `
+                <div class="md:col-span-2 text-[10px] font-black text-gray-500 tracking-widest">${t.date}</div>
+                <div class="md:col-span-7">
+                    <h4 class="text-xl font-bold text-white tracking-tight uppercase italic">${t.title}</h4>
+                </div>
+                <div class="md:col-span-3 text-right">
+                    <span class="text-gray-500 text-[9px] tracking-[0.3em] uppercase block mb-1">Amount</span>
+                    <span class="text-2xl font-black text-white tracking-tighter group-hover:text-emerald-400 transition-colors">NT$ ${t.amount}</span>
+                </div>
+            `;
+            tenderContainer.appendChild(row);
+        });
+
+        // 3. GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+        
+        gsap.from(".service-card", {
+            scrollTrigger: {
+                trigger: "#about",
+                start: "top 80%"
+            },
+            y: 50,
+            opacity: 0,
+            duration: 1.2,
+            stagger: 0.2,
+            ease: "power4.out"
+        });
+
+        gsap.from(".tender-row", {
+            scrollTrigger: {
+                trigger: "#tender",
+                start: "top 80%"
+            },
+            x: -20,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.1,
+            ease: "power2.out"
+        });
+    </script>
+</body>
+</html>
