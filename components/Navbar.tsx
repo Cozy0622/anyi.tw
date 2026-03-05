@@ -1,75 +1,90 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const navLinks = [
-    { name: '首頁', path: '/' },
-    { name: '服務項目', path: '/services' },
-    { name: '關於我們', path: '/about' },
-    { name: '最新消息', path: '/news' },
+    { name: '品牌願景', path: '/about' },
+    { name: '服務生態', path: '/services' },
+    { name: '無障礙美學', path: '/accessibility' },
+    { name: '最新動態', path: '/news' },
     { name: '聯絡我們', path: '/contact' },
   ];
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/60 backdrop-blur-xl dark:bg-zinc-900/60">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-10">
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="size-8 text-primary group-hover:scale-110 transition-transform">
-            <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-              <path d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z"></path>
-            </svg>
+    <header 
+      className={`fixed top-0 z-[100] w-full transition-all duration-500 ${
+        scrolled ? 'bg-black/40 backdrop-blur-xl border-b border-white/5 py-4' : 'bg-transparent py-8'
+      }`}
+    >
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-10">
+        <Link to="/" className="flex flex-col group">
+          <div className="text-2xl font-black tracking-[0.2em] uppercase text-white group-hover:text-emerald-400 transition-colors">
+            ANYI CARE
           </div>
-          <h2 className="text-xl font-black leading-tight tracking-tight text-dark-text dark:text-white">安一長照</h2>
+          <div className="text-[10px] tracking-[0.4em] text-emerald-400 font-bold uppercase">安一長照</div>
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-9">
+        <nav className="hidden md:flex items-center gap-10">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className={`text-sm font-medium transition-all hover:text-primary relative ${
-                isActive(link.path) ? 'text-primary font-bold' : 'text-dark-text dark:text-gray-300'
+              className={`text-xs font-black uppercase tracking-[0.2em] transition-all hover:text-emerald-400 relative ${
+                isActive(link.path) ? 'text-emerald-400' : 'text-white/80'
               }`}
             >
               {link.name}
-              {isActive(link.path) && <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-primary to-primary-dark"></span>}
+              {isActive(link.path) && (
+                <span className="absolute -bottom-2 left-0 w-full h-0.5 bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)]"></span>
+              )}
             </Link>
           ))}
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           <Link
             to="/contact"
-            className="hidden sm:flex min-w-[100px] cursor-pointer items-center justify-center rounded-lg h-10 px-6 bg-gradient-to-r from-primary to-primary-dark text-white text-sm font-bold hover:shadow-lg hover:opacity-90 transition-all"
+            className="hidden sm:flex items-center justify-center rounded-full bg-white text-black px-8 py-2.5 text-xs font-black tracking-widest uppercase hover:bg-emerald-400 hover:text-white transition-all shadow-xl"
           >
-            預約諮詢
+            Inquiry
           </Link>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-dark-text dark:text-white"
+            className="md:hidden text-white hover:text-emerald-400 transition-colors"
           >
-            <span className="material-symbols-outlined">{isOpen ? 'close' : 'menu'}</span>
+            <span className="material-symbols-outlined text-3xl">{isOpen ? 'close' : 'menu'}</span>
           </button>
         </div>
       </div>
 
       {/* Mobile Nav */}
-      {isOpen && (
-        <div className="md:hidden bg-white/90 backdrop-blur-xl dark:bg-zinc-900/90 border-b border-white/20 p-4 space-y-4">
+      <div 
+        className={`fixed inset-0 z-[-1] bg-black/95 backdrop-blur-2xl transition-all duration-500 md:hidden ${
+          isOpen ? 'opacity-100 visible' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        <div className="flex flex-col items-center justify-center h-full gap-8">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
               onClick={() => setIsOpen(false)}
-              className={`block text-base font-medium p-2 rounded-lg ${
-                isActive(link.path) ? 'bg-primary/10 text-primary font-bold' : 'text-dark-text dark:text-gray-300'
+              className={`text-2xl font-black tracking-widest uppercase ${
+                isActive(link.path) ? 'text-emerald-400' : 'text-white'
               }`}
             >
               {link.name}
@@ -78,12 +93,12 @@ const Navbar: React.FC = () => {
           <Link
             to="/contact"
             onClick={() => setIsOpen(false)}
-            className="block w-full text-center py-3 bg-gradient-to-r from-primary to-primary-dark text-white font-bold rounded-lg shadow-md"
+            className="mt-8 px-12 py-4 bg-emerald-500 text-black font-black rounded-full text-xl"
           >
             立即諮詢
           </Link>
         </div>
-      )}
+      </div>
     </header>
   );
 };

@@ -8,6 +8,7 @@ import Services from './pages/Services';
 import About from './pages/About';
 import News from './pages/News';
 import Contact from './pages/Contact';
+import Accessibility from './pages/Accessibility';
 
 const App: React.FC = () => {
   return (
@@ -20,6 +21,7 @@ const App: React.FC = () => {
           <Route path="/about" element={<About />} />
           <Route path="/news" element={<News />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/accessibility" element={<Accessibility />} />
         </Routes>
         <Footer />
         
