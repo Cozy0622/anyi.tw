@@ -7,6 +7,16 @@ const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
+  // 當手機版選單開啟時，鎖定背景捲動以修復破圖 bug
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [isOpen]);
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
@@ -26,15 +36,19 @@ const Navbar: React.FC = () => {
   return (
     <header 
       className={`fixed top-0 z-[100] w-full transition-all duration-500 ${
-        scrolled ? 'bg-black/40 backdrop-blur-xl border-b border-white/5 py-4' : 'bg-transparent py-8'
+        scrolled ? 'bg-black/40 backdrop-blur-xl border-b border-white/5' : 'bg-transparent'
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-10">
-        <Link to="/" className="flex flex-col group">
-          <div className="text-2xl font-black tracking-[0.2em] uppercase text-white group-hover:text-emerald-400 transition-colors">
-            ANYI CARE
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-10 py-0">
+        <Link to="/" className="flex items-center group">
+          {/* 完整品牌 Logo (內含文字) - 縮小兩倍 (h-24) */}
+          <div className="flex-shrink-0 flex items-center">
+            <img 
+              src="/assets/images/logo/1.png" 
+              alt="Anyi Care 安一長照" 
+              className="h-24 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            />
           </div>
-          <div className="text-[10px] tracking-[0.4em] text-emerald-400 font-bold uppercase">安一長照</div>
         </Link>
 
         {/* Desktop Nav */}
@@ -43,7 +57,7 @@ const Navbar: React.FC = () => {
             <Link
               key={link.path}
               to={link.path}
-              className={`text-xs font-black uppercase tracking-[0.2em] transition-all hover:text-emerald-400 relative ${
+              className={`text-base font-black uppercase tracking-[0.1em] transition-all hover:text-emerald-400 relative ${
                 isActive(link.path) ? 'text-emerald-400' : 'text-white/80'
               }`}
             >
@@ -58,26 +72,42 @@ const Navbar: React.FC = () => {
         <div className="flex items-center gap-6">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-white hover:text-emerald-400 transition-colors"
+            className="md:hidden text-white hover:text-emerald-400 transition-all duration-300"
           >
-            <span className="material-symbols-outlined text-3xl">{isOpen ? 'close' : 'menu'}</span>
+            {isOpen ? (
+              <span className="material-symbols-outlined text-4xl">close</span>
+            ) : (
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8">
+                <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            )}
           </button>
         </div>
       </div>
 
       {/* Mobile Nav */}
       <div 
-        className={`fixed inset-0 z-[-1] bg-black/95 backdrop-blur-2xl transition-all duration-500 md:hidden ${
-          isOpen ? 'opacity-100 visible' : 'opacity-0 pointer-events-none'
+        className={`fixed inset-0 z-[110] bg-black/98 backdrop-blur-3xl transition-all duration-500 md:hidden ${
+          isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full pointer-events-none'
         }`}
       >
-        <div className="flex flex-col items-center justify-center h-full gap-8">
+        {/* 手機版選單內的關閉按鈕 */}
+        <div className="absolute top-8 right-6">
+          <button
+            onClick={() => setIsOpen(false)}
+            className="text-white hover:text-emerald-400 transition-colors"
+          >
+            <span className="material-symbols-outlined text-4xl">close</span>
+          </button>
+        </div>
+
+        <div className="flex flex-col items-center justify-center h-full gap-10">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
               onClick={() => setIsOpen(false)}
-              className={`text-2xl font-black tracking-widest uppercase ${
+              className={`text-3xl font-black tracking-[0.2em] uppercase transition-all ${
                 isActive(link.path) ? 'text-emerald-400' : 'text-white'
               }`}
             >
