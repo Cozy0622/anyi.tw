@@ -7,7 +7,7 @@ export interface ServiceItem {
   features: string[];
 }
 
-export interface NewsArticle {
+export interface BlogArticle {
   id: string;
   category: string;
   date: string;

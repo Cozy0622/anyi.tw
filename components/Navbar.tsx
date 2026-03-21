@@ -27,7 +27,7 @@ const Navbar: React.FC = () => {
     { name: '品牌願景', path: '/about' },
     { name: '服務生態', path: '/services' },
     { name: '無障礙美學', path: '/accessibility' },
-    { name: '最新動態', path: '/news' },
+    { name: '部落格', path: '/blog' },
     { name: '聯絡我們', path: '/contact' },
   ];
 
