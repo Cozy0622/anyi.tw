@@ -81,13 +81,13 @@ const BuildingDecomposition: React.FC = () => {
               trigger: cards[i + 1],
               start: "top bottom",
               end: "top top",
-              scrub: true
-            },
-            scale: 0.94,
-            opacity: 0.4,
-            filter: "blur(10px)",
-            ease: "none"
-          });
+              scrub: 1.5
+          },
+          scale: 0.96,
+          opacity: 0.5,
+          filter: "blur(4px)",
+          ease: "none"
+        });
         }
       });
     }, containerRef);
