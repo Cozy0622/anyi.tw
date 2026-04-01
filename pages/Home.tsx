@@ -353,16 +353,16 @@ const Home: React.FC = () => {
             <span className="text-[10px] font-bold tracking-[0.55em] uppercase">Get Started</span>
             <span className="w-8 h-px bg-emerald-500/40" />
           </div>
-          <h2 className="text-4xl md:text-7xl font-black tracking-[-0.04em] leading-[0.9] text-white mb-8">準備開始了嗎？</h2>
+          <h2 className="text-4xl md:text-7xl font-black tracking-[-0.04em] leading-[0.9] text-white mb-8">今天就讓我們<br/>守護您的家人</h2>
           <p className="text-gray-500 text-base mb-14 max-w-sm mx-auto leading-relaxed">
-            一通電話，一次諮詢，讓安一長照為您規劃最完善的照護方案。
+            免費初次諮詢，專業評估長者需求，為您量身規劃最完善的照護方案。
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/contact" className="inline-flex items-center gap-3 bg-emerald-500 text-black px-10 py-4 rounded-full font-black text-sm tracking-[0.15em] uppercase hover:bg-emerald-400 transition-all duration-300 hover:gap-5">
-              立即聯絡我們 →
+            <Link to="/contact" className="inline-flex items-center gap-3 bg-emerald-500 text-black px-10 py-4 rounded-full font-black text-sm tracking-[0.15em] uppercase hover:bg-emerald-400 transition-all duration-300 hover:gap-5 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
+              免費諮詢方案 →
             </Link>
             <Link to="/services" className="inline-flex items-center border border-white/12 text-white/70 px-10 py-4 rounded-full font-semibold text-sm tracking-[0.15em] uppercase hover:border-white/25 hover:bg-white/5 transition-all duration-300">
-              了解服務詳情
+              查看服務項目
             </Link>
           </div>
         </div>
