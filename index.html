@@ -148,10 +148,7 @@
       overflow-x: hidden;
     }
     ::-webkit-scrollbar { display: none; }
-    /* Smooth scroll */
-    html { scroll-behavior: smooth; }
-    /* Prevent layout shift */
-    img { content-visibility: auto; }
+    /* content-visibility: Lenis handles scroll smoothing, do NOT add scroll-behavior here */
     .noise-bg {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
