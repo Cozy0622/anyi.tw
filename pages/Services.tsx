@@ -2,7 +2,33 @@
 import React, { useEffect, useRef } from 'react';
 import { SERVICES } from '../constants';
 import * as THREE from 'three';
-import gsap from 'gsap';
+
+const PROCESS_STEPS = [
+  {
+    num: '01',
+    title: '線上諮詢',
+    desc: '透過電話、LINE 或官網預約初步諮詢，說明您的照護需求。',
+    img: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?q=80&w=800&auto=format&fit=crop'
+  },
+  {
+    num: '02',
+    title: '到府評估',
+    desc: '專業社工與護理師親自到府，全面了解長者現況與家庭需求。',
+    img: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=800&auto=format&fit=crop'
+  },
+  {
+    num: '03',
+    title: '擬定計畫',
+    desc: '量身打造最合適的照護方案，提供透明報價，無隱藏費用。',
+    img: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=800&auto=format&fit=crop'
+  },
+  {
+    num: '04',
+    title: '開始服務',
+    desc: '合約簽署完成，正式啟動專屬的高品質照護服務。',
+    img: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?q=80&w=800&auto=format&fit=crop'
+  },
+];
 
 const Services: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -12,14 +38,12 @@ const Services: React.FC = () => {
     if (!canvasRef.current) return;
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, alpha: true, antialias: false, powerPreference: "high-performance" });
-    const resize = () => {
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    };
-    window.addEventListener('resize', resize);
-    resize();
-
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvasRef.current,
+      alpha: true,
+      antialias: false,
+      powerPreference: 'high-performance'
+    });
     const material = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
@@ -31,110 +55,210 @@ const Services: React.FC = () => {
         uniform vec2 resolution;
         void main() {
           vec2 uv = gl_FragCoord.xy / resolution.xy;
-          float fluid = sin(uv.x * 2.5 + time * 0.1) * cos(uv.y * 1.5 + time * 0.15);
-          fluid += sin(uv.y * 4.0 - time * 0.05) * 0.5;
-          vec3 baseColor = vec3(0.22, 0.24, 0.26);
-          vec3 highlightColor = vec3(0.32, 0.38, 0.35);
-          vec3 finalColor = mix(baseColor, highlightColor, fluid + 0.5);
-          gl_FragColor = vec4(finalColor, 1.0);
+          float f = sin(uv.x * 3.0 + time * 0.07) * cos(uv.y * 2.0 + time * 0.11);
+          f += sin(uv.y * 5.0 - time * 0.04) * 0.35;
+          float t = clamp(f * 0.5 + 0.5, 0.0, 1.0);
+          vec3 c0 = vec3(0.05, 0.06, 0.06);
+          vec3 c1 = vec3(0.09, 0.12, 0.11);
+          gl_FragColor = vec4(mix(c0, c1, t), 1.0);
         }
       `
     });
     const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
     scene.add(plane);
 
-    let animationFrameId: number;
-    const animate = (time: number) => {
-      material.uniforms.time.value = time * 0.001;
+    const resize = () => {
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      material.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', resize);
+    resize();
+
+    let animId: number;
+    const animate = (t: number) => {
+      material.uniforms.time.value = t * 0.001;
       renderer.render(scene, camera);
-      animationFrameId = requestAnimationFrame(animate);
+      animId = requestAnimationFrame(animate);
     };
     requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener('resize', resize);
-      cancelAnimationFrame(animationFrameId);
+      cancelAnimationFrame(animId);
+      renderer.dispose();
     };
   }, []);
 
   return (
-    <div className="min-h-screen relative bg-[#222222] text-white" ref={containerRef}>
+    <div
+      className="min-h-screen relative text-white"
+      ref={containerRef}
+      style={{ background: '#0a0a0a' }}
+    >
       <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none" />
-      
-      <main className="relative z-10 pt-48 pb-32 px-6 md:px-20">
+
+      <main className="relative z-10 pt-44 pb-36 px-6 lg:px-12">
         <div className="max-w-7xl mx-auto">
-          
-          <div className="flex flex-col gap-6 mb-32 max-w-4xl">
-            <span className="text-emerald-400 font-bold tracking-[0.6em] uppercase text-xs">Ecosystem Services</span>
-            <h1 className="text-6xl md:text-8xl font-black leading-[0.9] tracking-tighter">
+
+          {/* Page Header */}
+          <div className="mb-28 max-w-4xl">
+            <div className="flex items-center gap-4 text-emerald-400 mb-8">
+              <span className="w-8 h-px bg-emerald-500/50" />
+              <span className="text-[10px] font-bold tracking-[0.55em] uppercase">Ecosystem Services</span>
+            </div>
+            <h1
+              className="font-black leading-[0.88] tracking-[-0.04em] mb-10"
+              style={{ fontSize: 'clamp(3.5rem,10vw,8rem)' }}
+            >
               細緻入微。<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">全方位照護</span>。
+              <span
+                className="text-transparent"
+                style={{
+                  background: 'linear-gradient(135deg, #34d399, #22d3ee)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                } as React.CSSProperties}
+              >
+                全方位照護
+              </span>
+              。
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mt-10 leading-relaxed font-light">
-              安一深知每位長者的需求獨一無二。我們建立了自給自足的長照生態系，從空間營造到 AI 科技，為尊榮長者守護安穩的晚年。
+            <p className="text-gray-500 text-lg leading-relaxed max-w-xl font-light">
+              安一深知每位長者的需求獨一無二。我們建立了自給自足的長照生態系，
+              從空間營造到 AI 科技，為尊榮長者守護安穩的晚年。
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-40">
-            {SERVICES.map((service) => (
-              <div key={service.id} className="group relative bg-white/5 backdrop-blur-xl rounded-[3rem] overflow-hidden border border-white/10 hover:border-emerald-500/30 transition-all duration-700 flex flex-col shadow-xl">
-                <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                
-                <div className="w-full aspect-[16/10] overflow-hidden relative">
-                  <img src={service.image} alt={service.title} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000" />
+          {/* Services — editorial grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-32">
+            {SERVICES.map((service, idx) => (
+              <div
+                key={service.id}
+                className={`group relative rounded-3xl border border-white/[0.07] overflow-hidden flex flex-col hover:border-emerald-500/20 transition-all duration-700 ${
+                  idx === 0 ? 'lg:col-span-2' : ''
+                }`}
+                style={{ background: 'rgba(255,255,255,0.02)' }}
+              >
+                {/* Image */}
+                <div
+                  className="w-full overflow-hidden"
+                  style={{ aspectRatio: idx === 0 ? '21/8' : '16/9' }}
+                >
+                  <img
+                    src={service.image}
+                    alt={service.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60 pointer-events-none" />
                 </div>
 
-                <div className="p-10 md:p-14 flex flex-col flex-1 relative z-10">
-                  <h3 className="text-3xl md:text-4xl font-black mb-6 tracking-tight">{service.title}</h3>
-                  <p className="text-gray-300 text-lg mb-10 leading-relaxed font-medium">{service.description}</p>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
-                    {service.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-center gap-3 text-sm text-gray-200 font-medium">
-                        <div className="size-1.5 bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
-                        {feature}
+                {/* Content */}
+                <div className={`p-8 md:p-12 flex flex-col flex-1 ${idx === 0 ? 'lg:flex-row lg:gap-16 lg:items-start' : ''}`}>
+                  <div className={idx === 0 ? 'lg:flex-1' : ''}>
+                    <h3 className="text-2xl md:text-3xl font-black mb-4 tracking-tight group-hover:text-emerald-400 transition-colors duration-300">
+                      {service.title}
+                    </h3>
+                    <p className="text-gray-500 text-sm leading-relaxed mb-8">{service.description}</p>
+                  </div>
+                  <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 ${idx === 0 ? 'lg:w-80 lg:shrink-0' : ''}`}>
+                    {service.features.map((f, i) => (
+                      <div key={i} className="flex items-center gap-3 text-xs text-gray-400 font-medium">
+                        <div className="size-1 rounded-full bg-emerald-500 shrink-0" />
+                        {f}
                       </div>
                     ))}
                   </div>
-
-                  <button className="mt-auto w-fit group/btn flex items-center gap-4 text-emerald-400 font-bold tracking-widest uppercase text-xs">
-                    了解更多細節 Explore More
-                    <span className="text-xl group-hover/btn:translate-x-2 transition-transform">→</span>
-                  </button>
                 </div>
               </div>
             ))}
           </div>
 
-          <section className="relative rounded-[4rem] p-12 md:p-24 overflow-hidden border border-white/10 bg-white/5 backdrop-blur-2xl">
-            <div className="absolute top-0 right-0 p-20 opacity-[0.05] font-black text-[15rem] leading-none pointer-events-none uppercase">Step</div>
-            
-            <div className="relative z-10 mb-20">
-              <span className="text-emerald-400 font-bold tracking-[0.4em] uppercase text-xs mb-4 block">Application Process</span>
-              <h2 className="text-5xl md:text-6xl font-black tracking-tighter italic text-white">服務申請流程</h2>
+          {/* Process */}
+          <section
+            className="relative rounded-3xl border border-white/[0.07] p-10 md:p-20 mb-24 overflow-hidden"
+            style={{ background: 'rgba(255,255,255,0.018)' }}
+          >
+            <div
+              className="absolute top-0 right-0 p-16 font-black leading-none select-none pointer-events-none uppercase text-white"
+              style={{ fontSize: '12rem', opacity: 0.018 }}
+              aria-hidden="true"
+            >
+              Step
             </div>
 
-            <div className="relative grid grid-cols-1 md:grid-cols-4 gap-12 max-w-6xl">
-              {[
-                { icon: 'chat', title: '線上諮詢', desc: '透過電話、LINE或官網預約初步諮詢' },
-                { icon: 'home_health', title: '到府評估', desc: '專業社工與護理師親自到府了解需求' },
-                { icon: 'assignment_turned_in', title: '擬定計畫', desc: '量身打造最合適的照護方案與報價' },
-                { icon: 'celebration', title: '開始服務', desc: '合約簽署完成，正式啟動專業服務' }
-              ].map((step, i) => (
-                <div key={i} className="flex flex-col group">
-                  <h4 className="font-bold text-xl mb-4 text-white group-hover:text-emerald-400 transition-colors">{step.title}</h4>
-                  <p className="text-gray-300 leading-relaxed font-medium">{step.desc}</p>
+            <div className="relative z-10 mb-16">
+              <div className="flex items-center gap-4 text-emerald-400 mb-6">
+                <span className="w-8 h-px bg-emerald-500/50" />
+                <span className="text-[10px] font-bold tracking-[0.55em] uppercase">Application Process</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black tracking-[-0.03em] text-white">服務申請流程</h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {PROCESS_STEPS.map((step, i) => (
+                <div
+                  key={step.num}
+                  className="group relative rounded-2xl overflow-hidden flex flex-col"
+                  style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
+                >
+                  {/* Step image */}
+                  <div className="relative overflow-hidden" style={{ aspectRatio: '4/3' }}>
+                    <img
+                      src={step.img}
+                      alt={step.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-70 group-hover:opacity-90"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    {/* Number badge */}
+                    <div className="absolute top-4 left-4">
+                      <span className="text-[10px] font-black tracking-[0.45em] uppercase px-3 py-1.5 rounded-full"
+                        style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', border: '1px solid rgba(52,211,153,0.3)' }}>
+                        {step.num}
+                      </span>
+                    </div>
+                    {/* Arrow connector (not on last) */}
+                    {i < PROCESS_STEPS.length - 1 && (
+                      <div className="absolute top-1/2 -right-3 -translate-y-1/2 z-10 hidden lg:flex size-6 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-black">
+                        →
+                      </div>
+                    )}
+                  </div>
+                  {/* Text content */}
+                  <div className="p-6 flex flex-col gap-2">
+                    <h4 className="font-black text-base text-white group-hover:text-emerald-400 transition-colors duration-300">
+                      {step.title}
+                    </h4>
+                    <p className="text-gray-500 text-xs leading-relaxed">{step.desc}</p>
+                  </div>
                 </div>
               ))}
             </div>
           </section>
 
-          <div className="mt-40 text-center py-20">
-             <h3 className="text-4xl md:text-6xl font-black mb-12 tracking-tighter text-white">準備好開啟<br /><span className="text-emerald-400">高品質照護</span>了嗎？</h3>
-             <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
-                <button className="bg-white text-black px-12 py-6 rounded-full font-black text-xl hover:bg-emerald-400 hover:text-white transition-all shadow-xl">撥打諮詢 0800-000-000</button>
-                <button className="bg-white/5 border border-white/10 px-12 py-6 rounded-full font-black text-xl hover:bg-white/10 transition-all text-white">線上留言與我們聯繫</button>
-             </div>
+          {/* Bottom CTA */}
+          <div className="text-center">
+            <h3 className="text-4xl md:text-6xl font-black mb-6 tracking-[-0.04em] text-white leading-[0.9]">
+              準備好開啟<br />
+              <span className="text-emerald-400">高品質照護</span>了嗎？
+            </h3>
+            <p className="text-gray-500 text-base mb-12 max-w-sm mx-auto leading-relaxed">
+              立即聯絡我們，讓專業團隊為您量身規劃最適合的照護方案。
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <a
+                href="tel:0800000000"
+                className="inline-flex items-center gap-3 bg-emerald-500 text-black px-10 py-4 rounded-full font-black text-sm tracking-[0.15em] uppercase hover:bg-emerald-400 transition-all duration-300 hover:gap-5"
+              >
+                撥打諮詢電話 →
+              </a>
+              <a
+                href="#footer"
+                className="inline-flex items-center border border-white/10 text-white/60 px-10 py-4 rounded-full font-semibold text-sm tracking-[0.15em] uppercase hover:border-white/22 hover:text-white transition-all duration-300"
+              >
+                線上留言
+              </a>
+            </div>
           </div>
 
         </div>
