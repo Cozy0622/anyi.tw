@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://anyicare.tw/sitemap.xml
+
+# Block build artifacts
+Disallow: /assets/*.map
